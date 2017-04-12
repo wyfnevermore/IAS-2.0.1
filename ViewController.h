@@ -90,6 +90,7 @@
 
 - (IBAction)ladeng:(id)sender;
 - (IBAction)duoji:(id)sender;
+- (IBAction)disconnect:(id)sender;
 
 @end
 

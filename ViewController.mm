@@ -285,6 +285,10 @@
                     dispatch_time_t littletime = dispatch_time(DISPATCH_TIME_NOW, 0.5*NSEC_PER_SEC);
                     dispatch_after(littletime, dispatch_get_main_queue(), ^{
                         [self writeToPeripheral:testbigstring :_outsidesettingCharacteristic];
+                        if (workFlowCount == workFlowNumber) {
+                            [self writeToPeripheral:workFlowArr[0] :_activeConfigurationCharacteristic];
+                            NSLog(@"重置工作流");
+                        }
                     });
                 });
                 delayCount++;
@@ -354,6 +358,7 @@
                 dataArr[i] = byteData[i+1];
             }
             NSData * myData = [NSData dataWithBytes:dataArr length:4];
+            NSLog(@"%@",myData);
             [_myPeripheral writeValue:myData forCharacteristic:_requestdataCharacteristic type:CBCharacteristicWriteWithResponse];
             NSLog(@"characteristic : %@, data : %@,\nvalue : %@", characteristic, data, value);
         }
@@ -632,6 +637,7 @@
     [workFlowName removeAllObjects];
     [workFlowDetail removeAllObjects];
     [outsideArr removeAllObjects];
+    receStr = 0;
     isdanliang = NO;
     if (mCount != 0) { //用mcount是否为0来判断是掉线还是自己搜索设备
         delayCount = 1;
@@ -835,6 +841,12 @@
         NSLog(@"未找到UUID");
     }else{
         [_myPeripheral writeValue:writeValue forCharacteristic:_duojiCharacteristic type:CBCharacteristicWriteWithResponse];
+    }
+}
+
+- (IBAction)disconnect:(id)sender {
+    if (_myPeripheral != nil) {
+        [_myCentralManager cancelPeripheralConnection:_myPeripheral];
     }
 }
 
