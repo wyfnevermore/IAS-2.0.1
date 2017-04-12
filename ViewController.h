@@ -60,6 +60,7 @@
     int workFlowPoints;
     int workFlowPointsType;
     int outsidedatapackageNumber;
+    int testnumber;
 }
 
 @property (strong, nonatomic) CBCentralManager* myCentralManager;
@@ -77,6 +78,7 @@
 @property (strong, nonatomic) CBCharacteristic* ladengCharacteristic;
 @property (strong, nonatomic) CBCharacteristic* duojiCharacteristic;
 @property (strong, nonatomic) CBCharacteristic* outsidesettingCharacteristic;
+@property (strong, nonatomic) CBCharacteristic* workFlowForNowCharacteristic;
 @property (weak, nonatomic) IBOutlet UILabel *uplabel;
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
 @property (weak, nonatomic) IBOutlet UIButton *writeBtn;
@@ -91,6 +93,8 @@
 - (IBAction)ladeng:(id)sender;
 - (IBAction)duoji:(id)sender;
 - (IBAction)disconnect:(id)sender;
+- (IBAction)transWorkFlow:(id)sender;
+- (IBAction)getData:(id)sender;
 
 @end
 

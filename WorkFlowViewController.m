@@ -65,8 +65,7 @@
     NSUInteger row = [indexPath row];
     NSUInteger oldRow = _returnWorkFlow;
     //如何点击当前的cell 最右边就会出现一个对号 ，在点击其他的cell 对号显示当前，上一个小时
-    cell.accessoryType =  (row==oldRow)?UITableViewCellAccessoryCheckmark:UITableViewCellAccessoryNone;
-
+    cell.accessoryType = (row==oldRow)?UITableViewCellAccessoryCheckmark:UITableViewCellAccessoryNone;
     return cell;
 }
 

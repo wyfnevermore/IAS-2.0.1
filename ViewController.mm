@@ -10,6 +10,7 @@
 #import "WorkFlowViewController.h"
 
 @interface ViewController ()<WorkFlowChooseDelegate>
+@property (strong,nonatomic)NSMutableArray *workFlowForNow;
 @end
 
 @implementation ViewController
@@ -55,10 +56,12 @@
     workFlowDetail = [[NSMutableArray alloc]init];
     outsideArr = [[NSMutableArray alloc]init];
     _myPeripherals = [NSMutableArray array];
+    _workFlowForNow = [[NSMutableArray alloc]init];
     NSDictionary *options = @{CBCentralManagerOptionShowPowerAlertKey:@"NO"};
     self.myCentralManager = [[CBCentralManager alloc]initWithDelegate:self queue:nil options:options];
     UITapGestureRecognizer *labelTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
     [_typeLabel addGestureRecognizer:labelTapGestureRecognizer];
+    testnumber = 0;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -224,6 +227,10 @@
             [self.myPeripheral setNotifyValue:YES forCharacteristic:c];
             NSLog(@"找到NOTIFY : %@", c);
         }
+        if([c.UUID.UUIDString containsString:@"412F"]){
+            self.workFlowForNowCharacteristic = c;
+            NSLog(@"找到WRITE : %@", c);
+        }
         //工作流配置列表和具体参数的查找和选择
         if ([c.UUID.UUIDString containsString:@"4113"]) {//读取工作流数量
             [self.myPeripheral readValueForCharacteristic:c];
@@ -300,6 +307,11 @@
     if([characteristic.UUID.UUIDString containsString:@"4117"]){
         packageWorkFlowNo++;
         NSData* data = characteristic.value;
+        
+        if (testnumber == 1) {
+            [_workFlowForNow addObject:data];
+        }
+        
         NSString *workFlowReturnData = [Tools hexadecimalString:data];
         NSLog(@"%d",packageWorkFlowNo);
         NSLog(@"返回的配置参数数据：%@",workFlowReturnData);
@@ -847,6 +859,25 @@
 - (IBAction)disconnect:(id)sender {
     if (_myPeripheral != nil) {
         [_myCentralManager cancelPeripheralConnection:_myPeripheral];
+    }
+}
+
+- (IBAction)transWorkFlow:(id)sender {
+     if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected && _workFlowForNow.count != 0) {
+         NSLog(@"%@",_workFlowForNow);
+         for (int i = 0; i < _workFlowForNow.count; i++) {
+             [_myPeripheral writeValue:_workFlowForNow[i] forCharacteristic:_workFlowForNowCharacteristic type:CBCharacteristicWriteWithResponse];
+         }
+     }
+}
+
+- (IBAction)getData:(id)sender {
+    if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected && workFlowArr.count >= 2) {
+        testnumber = 1;
+        if (_workFlowForNow.count > 0) {
+            [_workFlowForNow removeAllObjects];
+        }
+        [self writeToPeripheral:workFlowArr[1] :_requestScanConfigurationDataCharacteristic];
     }
 }
 
