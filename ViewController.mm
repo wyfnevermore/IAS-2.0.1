@@ -17,6 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [self.view bringSubviewToFront:_done];
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:17.0/255 green:55.0/255 blue:108.0/255 alpha:1]];
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:22],NSForegroundColorAttributeName:[UIColor whiteColor]}];
@@ -48,8 +49,9 @@
     _typePickView.dataSource = self;
     pickArray = [[NSArray alloc] initWithObjects:@"乳胶",@"爬爬垫", @"珍珠粉",@"保鲜膜",@"奶嘴",@"药品",@"木材",@"奶粉",nil];
     _typeLabel.userInteractionEnabled = YES;
-    projectIDStr = @"234";
-    formerType = @"234";
+    projectIDStr = @"167";
+    formerType = @"167";
+    [Tools getModelRestData:projectIDStr];
     //初始化CBCentralManager
     workFlowArr = [[NSMutableArray alloc]init];
     workFlowName = [[NSMutableArray alloc]init];
@@ -61,7 +63,6 @@
     self.myCentralManager = [[CBCentralManager alloc]initWithDelegate:self queue:nil options:options];
     UITapGestureRecognizer *labelTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
     [_typeLabel addGestureRecognizer:labelTapGestureRecognizer];
-    testnumber = 0;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -308,9 +309,7 @@
         packageWorkFlowNo++;
         NSData* data = characteristic.value;
         
-        if (testnumber == 1) {
-            [_workFlowForNow addObject:data];
-        }
+
         
         NSString *workFlowReturnData = [Tools hexadecimalString:data];
         NSLog(@"%d",packageWorkFlowNo);
@@ -331,6 +330,7 @@
                 if (returnByteWorkFlowNo == (packageNumber-1)*19) {
                     bool isGetScanConfig = getScanCofig(returnWorkFlowData,&(scanConfigWorkFlow));
                     NSLog(@"有无数据：%d,扫描类型：%s,%hhu(0为column，1为hardma)，点数：%hu，波长：%hu到%hu,平均次数:%hu。",isGetScanConfig,scanConfigWorkFlow.slewScanCfg.head.config_name,scanConfigWorkFlow.slewScanCfg.section[0].section_scan_type,scanConfigWorkFlow.slewScanCfg.section[0].num_patterns,scanConfigWorkFlow.slewScanCfg.section[0].wavelength_start_nm,scanConfigWorkFlow.slewScanCfg.section[0].wavelength_end_nm,scanConfigWorkFlow.slewScanCfg.head.num_repeats);
+                    changedScanConfigWorkFlow = scanConfigWorkFlow;
                     NSString *configName;
                     NSString *configDetail;
                     configName = [[NSString alloc] initWithFormat:@"%s",scanConfigWorkFlow.slewScanCfg.head.config_name];
@@ -397,7 +397,6 @@
                             NSLog(@"%d",isGetDataCB);
                             isCbInited = true;
                             formerType = projectIDStr;
-                            init = 0;
                             [_writeBtn setTitle:@"采集样品" forState:UIControlStateNormal];
                             break;
                         }
@@ -406,11 +405,16 @@
                             NSLog(@"%d",isGetDataYP);
                             [_uplabel setText:@"采集样品完成！"];
                             dataString = [self getAbs:cb intentsities:intentsities];
-                            [self getRestData];
-                            init = 0;
+                            segueToResult = [Tools getRestData:projectIDStr :dataString];
+                            [_uplabel setText:segueToResult];
+                            [self performSegueWithIdentifier:@"result" sender:self];
                             break;
                         }
+                            default:
+                            NSLog(@"未进行扫描");
+                            break;
                     }
+                    init = 0;
                     NSString * obj = @"00";
                     [self writeToPeripheral:obj :_duojiCharacteristic];
                     if (isdanliang == YES) {
@@ -457,142 +461,6 @@
     }
     return dataStr;
 }
-
-
-//http服务
--(void)getRestData{
-    NSURL *url = [NSURL URLWithString:@"http://115.29.198.253:8088/WCF/Service/GetData"];
-    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:url];
-    [request setHTTPMethod:@"POST"];
-    //设置参数
-    //设置请求头
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    //设置请求体
-    NSDictionary *dicTest = @{@"Service" : @"SendSpectrumPakg",
-                              @"DeviceCode" : @"11",
-                              @"Data" : @{
-                                      @"ProjectId" : projectIDStr,
-                                      @"SpectrumData" : dataString
-                                      }
-                              };
-    NSData *data2 = [NSJSONSerialization dataWithJSONObject:dicTest options:NSJSONWritingPrettyPrinted error:nil];
-    [request setHTTPBody:data2];
-    //返回数据
-    NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-    NSString *receData = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
-    NSLog(@"%@",receData);
-    if ([receData containsString:@"异常"]) {
-        [_uplabel setText:@"数据异常"];
-    }else{
-        switch ([projectIDStr intValue]) {
-                //其它
-            case 0:{
-                NSArray *arrys01= [receData componentsSeparatedByString:@"@"];
-                NSString* str01=(NSString *)arrys01[2];
-                NSArray *arrys02= [str01 componentsSeparatedByString:@"\""];
-                NSString* str02=(NSString *)arrys02[0];
-                NSLog(@"%@",str02);
-                segueToResult = str02;
-                picToResult = @"yaowan";
-            }
-                break;
-                //木材
-            case 167:{
-                NSArray *arrys167= [receData componentsSeparatedByString:@"\""];
-                NSString* str167=(NSString *)arrys167[3];
-                NSLog(@"%@",str167);
-                segueToResult = str167;
-                picToResult = @"woods";
-            }
-                break;
-                //奶粉
-            case 87:{
-                NSArray *arrys87= [receData componentsSeparatedByString:@"\""];
-                NSString* str87=(NSString *)arrys87[3];
-                NSLog(@"%@",str87);
-                segueToResult = str87;
-                picToResult = @"naifen";
-            }
-                break;
-                //药品ok
-            case 471:{
-                NSArray *arrys471= [receData componentsSeparatedByString:@"\""];
-                NSString* str471=(NSString *)arrys471[3];
-                NSLog(@"%@",str471);
-                segueToResult = str471;
-                picToResult = @"yaowan";
-                [_uplabel setText:str471];
-                break;
-            }
-                //乳胶
-            case 234:{
-                NSArray *arrys234= [receData componentsSeparatedByString:@"\""];
-                NSString* str234=(NSString *)arrys234[3];
-                NSLog(@"%@",str234);
-                segueToResult = str234;
-                picToResult = @"yaowan";
-                [_uplabel setText:str234];
-                break;
-            }
-                //爬爬垫
-            case 257:{
-                NSArray *arrys257= [receData componentsSeparatedByString:@"\""];
-                NSString* str257=(NSString *)arrys257[3];
-                NSLog(@"%@",str257);
-                segueToResult = str257;
-                picToResult = @"yaowan";
-                [_uplabel setText:str257];
-                break;
-            }
-                //奶嘴
-            case 265:{
-                NSArray *arrys265= [receData componentsSeparatedByString:@"\""];
-                NSString* str265=(NSString *)arrys265[3];
-                NSLog(@"%@",str265);
-                segueToResult = str265;
-                picToResult = @"yaowan";
-                [_uplabel setText:str265];
-                break;
-            }
-                //珍珠粉
-            case 252:{
-                NSArray *arrys252= [receData componentsSeparatedByString:@"\""];
-                NSString* str252=(NSString *)arrys252[3];
-                NSLog(@"%@",str252);
-                picToResult = @"yaowan";
-                if ([str252 containsString:@"G"]) {
-                    [_uplabel setText:@"优质珍珠粉"];
-                    segueToResult = @"优质珍珠粉";
-                }else if ([str252 containsString:@"L"]){
-                    [_uplabel setText:@"劣质珍珠粉"];
-                    segueToResult = @"劣质珍珠粉";
-                }
-                break;
-            }
-                //保鲜膜
-            case 301:{
-                NSArray *arrys301= [receData componentsSeparatedByString:@"\""];
-                NSString* str301=(NSString *)arrys301[3];
-                NSLog(@"%@",str301);
-                segueToResult = str301;
-                picToResult = @"yaowan";
-                [_uplabel setText:str301];
-                break;
-            }
-            default:{
-                NSArray *arrys1= [receData componentsSeparatedByString:@"\""];
-                NSString* str1=(NSString *)arrys1[3];
-                NSLog(@"%@",str1);
-                segueToResult = str1;
-                picToResult = @"yaowan";
-                [_uplabel setText:str1];
-                break;
-            }
-        }
-    }
-    [self performSegueWithIdentifier:@"result" sender:self];
-}
-
 
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
@@ -866,18 +734,68 @@
      if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected && _workFlowForNow.count != 0) {
          NSLog(@"%@",_workFlowForNow);
          for (int i = 0; i < _workFlowForNow.count; i++) {
-             [_myPeripheral writeValue:_workFlowForNow[i] forCharacteristic:_workFlowForNowCharacteristic type:CBCharacteristicWriteWithResponse];
+             [self writeToPeripheral:_workFlowForNow[i] :_workFlowForNowCharacteristic];
          }
      }
 }
 
 - (IBAction)getData:(id)sender {
-    if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected && workFlowArr.count >= 2) {
-        testnumber = 1;
-        if (_workFlowForNow.count > 0) {
-            [_workFlowForNow removeAllObjects];
+    if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected) {
+        [_workFlowForNow removeAllObjects];
+        NSString* numberone = @"009e000000";
+        [_workFlowForNow addObject:numberone];
+        changedScanConfigWorkFlow = scanConfigWorkFlow;
+        
+        //假装已经获取到工作流
+        uScanConfig TransConfig = changedScanConfigWorkFlow;
+        TransConfig.slewScanCfg.head.num_repeats = 2;
+        changedScanConfigWorkFlow = TransConfig;
+        
+        outsideWorkFlow.sampleobj = 0;
+        outsideWorkFlow.lampmode = 1;
+        outsideWorkFlow.motormode = 1;
+        
+        bool getgetget = getScanConfigBuf(changedScanConfigWorkFlow, outsideWorkFlow, returnWorkFlowBlueData, returnWorkFlowBlueDataExt);
+        NSLog(@"res:%d",getgetget);
+        
+        //把获取的char数组赋给byte数组再转成NSdata，转成nsstring；
+        //转原来的工作流数据
+        NSUInteger len = 155;
+        Byte *byteData = (Byte*)malloc(len);
+        for (int i = 0; i < 155; i++) {
+            byteData[i] = returnWorkFlowBlueData[i];
         }
-        [self writeToPeripheral:workFlowArr[1] :_requestScanConfigurationDataCharacteristic];
+        NSData *adata = [[NSData alloc] initWithBytes:byteData length:155];
+        NSLog(@"%@",adata);
+        NSString* cutStr = [Tools hexadecimalString:adata];
+        NSLog(@"%@",cutStr);
+        
+        //转外部额外工作流的数据
+        Byte *byteDataExt = (Byte*)malloc(3);
+        for (int i = 0; i < 3; i++) {
+            byteDataExt[i] = returnWorkFlowBlueDataExt[i];
+        }
+        NSData *adataExt = [[NSData alloc] initWithBytes:byteDataExt length:3];
+        NSLog(@"%@",adataExt);
+        NSString* cutStrExt = [Tools hexadecimalString:adataExt];
+        NSLog(@"额外工作流：%@",cutStrExt);
+        
+        for (int i = 0; i < 9; i++) {
+            NSString *number = @"0";
+            NSString *nooo = [NSString stringWithFormat:@"%d",i+1];
+            number = [number stringByAppendingString:nooo];
+            NSLog(@"%@",number);
+            if (i != 8) {
+                NSString * data = [cutStr substringWithRange:NSMakeRange(i*38,38)];//一截19*2
+                number = [number stringByAppendingString:data];
+            }else{
+                NSString * data = [cutStr substringWithRange:NSMakeRange(i*38,6)];
+                number = [number stringByAppendingString:data];
+                number = [number stringByAppendingString:cutStrExt];
+            }
+            [_workFlowForNow addObject:number];
+            NSLog(@"%@",_workFlowForNow);
+        }
     }
 }
 

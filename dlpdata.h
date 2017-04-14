@@ -9,6 +9,8 @@
 
 	bool getScanCofig(char *buf,uScanConfig *pCfg);
 
+    bool getScanConfigBuf(uScanConfig  scanList,WorkFlowExt work_flow_list,char *pBuffer,char *Ext_pBuffer);
+
 	void getWanted();
 
 #endif

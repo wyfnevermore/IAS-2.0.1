@@ -22,4 +22,8 @@
 
 +(BOOL)activeOutside:(NSMutableArray*)outsideArray : (NSInteger)number :(CBPeripheral*)mPeripheral : (CBCharacteristic*)dianjicharacteristic :(CBCharacteristic*)ladengcharacteristic;
 
++ (NSString*)getRestData : (NSString*)projectIDstr : (NSString*)datastr;
+
++ (void)getModelRestData:(NSString*)projectIDstr;
+
 @end

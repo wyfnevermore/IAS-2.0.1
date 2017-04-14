@@ -16,7 +16,9 @@
 
 @interface ViewController : UIViewController<CBCentralManagerDelegate, CBPeripheralDelegate,UITableViewDataSource, UITableViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 {
-    uScanConfig scanConfigWorkFlow;
+    uScanConfig scanConfigWorkFlow;//用来接收设备中的工作流
+    uScanConfig changedScanConfigWorkFlow;
+    WorkFlowExt outsideWorkFlow;
     NSArray *pickArray;
     int init;
     int packageNumber;
@@ -28,6 +30,8 @@
     int isRepeat;
     int workFlowNumber;
     NSInteger mCount;
+    char returnWorkFlowBlueData[212];
+    char returnWorkFlowBlueDataExt[212];
     char returnWorkFlowData[1000];
     char returnData[4000];
     bool isGetCb;
@@ -53,6 +57,7 @@
     NSMutableArray *workFlowName;
     NSMutableArray *workFlowDetail;
     NSMutableArray *outsideArr;
+    NSMutableArray *getedModelWorkFlow;
     NSArray *outsideItemChoosedNow;
     NSTimer *timer;
     int workFlowCount;
@@ -61,6 +66,7 @@
     int workFlowPointsType;
     int outsidedatapackageNumber;
     int testnumber;
+    NSString *bluedatastr;
 }
 
 @property (strong, nonatomic) CBCentralManager* myCentralManager;

@@ -63,8 +63,23 @@ bool getDLPData(char *pData,double *wavelength,double *intensity, int if_x_shift
 		{
 			wavelength[i] = Results.wavelength[i];
 			intensity[i] = Results.intensity[i]/(double)gain;
-	
 		}
 	}
 	return true;
+}
+
+bool getScanConfigBuf(uScanConfig  scanList,WorkFlowExt work_flow_list,char *pBuffer,char *Ext_pBuffer)
+{
+    int bufferSize = sizeof(uScanConfig)*2;
+    int Ext_bufferSize = sizeof(WorkFlowExt);
+    if(pBuffer == NULL)
+    {
+        return false;
+    }
+    if(dlpspec_scan_write_configuration(&scanList,pBuffer,bufferSize) != DLPSPEC_PASS)
+    {
+        return false;
+    }
+    memcpy(Ext_pBuffer,(char*)(&work_flow_list),Ext_bufferSize);
+    return true;
 }
