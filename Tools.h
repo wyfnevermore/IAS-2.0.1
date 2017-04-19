@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <CoreBluetooth/CoreBluetooth.h>
+#import "dlpdata.h"
 
 @interface Tools : NSObject
 
@@ -16,7 +17,7 @@
 
 + (NSData*)dataWithHexstring:(NSString *)hexstring;
 
-+ (NSString*)setType:(NSString*)typeStr : (UIImageView*)typeImg;
++ (NSString*)setModelType:(NSString*)typeStr : (UIImageView*)typeImg :(NSInteger)deviceType;
 
 +(void)activeWorkFlow:(NSString*)workFlowStr :(CBPeripheral*)mPeripheral : (CBCharacteristic*)characteristic;
 
@@ -25,5 +26,7 @@
 + (NSString*)getRestData : (NSString*)projectIDstr : (NSString*)datastr;
 
 + (void)getModelRestData:(NSString*)projectIDstr;
+
++ (NSMutableArray*)getModelRestDataEverytime:(NSString*)projectIDstr:(uScanConfig)changedWorkFlow;
 
 @end

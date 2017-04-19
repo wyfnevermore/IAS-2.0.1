@@ -34,9 +34,6 @@
     Ymax = [[_dataXGDArray valueForKeyPath:@"@max.floatValue"]doubleValue];
     Ymin = [[_dataXGDArray valueForKeyPath:@"@min.floatValue"]doubleValue];
     NSLog(@"最大最小值：%f,%f",Ymax,Ymin);
-    for (int i = 0; i < _dataXGDArray.count; i++) {
-        NSLog(@"%@",_dataXGDArray[i]);
-    }
     //吸光度图谱
     [self.view addSubview:self.lineView];
     self.lineView.data = [self setData];

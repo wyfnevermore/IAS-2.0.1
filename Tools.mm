@@ -7,45 +7,50 @@
 //
 
 #import "Tools.h"
+#import "ViewController.h"
 
 @implementation Tools
 
 //切换类型
-+ (NSString*)setType:(NSString*)typeStr : (UIImageView*)typeImg{
++ (NSString*)setModelType:(NSString*)typeStr : (UIImageView*)typeImg :(NSInteger)deviceType{
     NSString *ProjectID;
-    if ([typeStr containsString:@"乳胶"]) {
-        [typeImg setImage:[UIImage imageNamed:@"rujiao"]];
+    if (deviceType == 0) {
+        if ([typeStr containsString:@"乳胶"]) {
+            [typeImg setImage:[UIImage imageNamed:@"rujiao"]];
+            ProjectID = @"234";
+        }
+        if ([typeStr containsString:@"木材"]) {
+            [typeImg setImage:[UIImage imageNamed:@"mucai"]];
+            ProjectID = @"167";
+        }
+        if ([typeStr containsString:@"爬爬垫"]) {
+            [typeImg setImage:[UIImage imageNamed:@"papadian"]];
+            ProjectID = @"257";
+        }
+        if ([typeStr containsString:@"奶嘴"]) {
+            [typeImg setImage:[UIImage imageNamed:@"naizui"]];
+            ProjectID = @"265";
+        }
+        if ([typeStr containsString:@"珍珠粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"zhenzhufen"]];
+            ProjectID = @"252";
+        }
+        if ([typeStr containsString:@"保鲜膜"]) {
+            [typeImg setImage:[UIImage imageNamed:@"baoxianmo"]];
+            ProjectID = @"301";
+        }
+        if ([typeStr containsString:@"药品"]) {
+            [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
+            ProjectID = @"566";
+        }
+        if ([typeStr containsString:@"奶粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"naifen"]];
+            ProjectID = @"87";
+        }
+    }else if (deviceType == 1){
+        [typeImg setImage:[UIImage imageNamed:@"jiaonang"]];
         ProjectID = @"234";
     }
-    if ([typeStr containsString:@"木材"]) {
-        [typeImg setImage:[UIImage imageNamed:@"mucai"]];
-        ProjectID = @"167";
-    }
-    if ([typeStr containsString:@"爬爬垫"]) {
-        [typeImg setImage:[UIImage imageNamed:@"papadian"]];
-        ProjectID = @"257";
-    }
-    if ([typeStr containsString:@"奶嘴"]) {
-        [typeImg setImage:[UIImage imageNamed:@"naizui"]];
-        ProjectID = @"265";
-    }
-    if ([typeStr containsString:@"珍珠粉"]) {
-        [typeImg setImage:[UIImage imageNamed:@"zhenzhufen"]];
-        ProjectID = @"252";
-    }
-    if ([typeStr containsString:@"保鲜膜"]) {
-        [typeImg setImage:[UIImage imageNamed:@"baoxianmo"]];
-        ProjectID = @"301";
-    }
-    if ([typeStr containsString:@"药品"]) {
-        [typeImg setImage:[UIImage imageNamed:@"yaopin"]];
-        ProjectID = @"471";
-    }
-    if ([typeStr containsString:@"奶粉"]) {
-        [typeImg setImage:[UIImage imageNamed:@"naifen"]];
-        ProjectID = @"87";
-    }
-    
     return ProjectID;
 }
 
@@ -225,7 +230,7 @@
 
 //从模型中获取工作流
 + (void)getModelRestData:(NSString*)projectIDstr{
-    //NSMutableArray* segueToResult;
+    ViewController *mainViewcontroller = [[ViewController alloc]init];
     ///*
     NSString*result;
     NSString* urlStr = @"http://115.29.198.253:8088/WCF/Service/GetConfig/";
@@ -238,10 +243,146 @@
     NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
     //NSLog(@"%@",data);
     result = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"%@",result);
-    NSLog(@"继续执行");
+    if (result != nil) {
+        NSLog(@"%@",result);
+        NSLog(@"继续");
+    }
 }
 
+//从模型中获取工作流
++ (NSMutableArray*)getModelRestDataEverytime:(NSString*)projectIDstr :(uScanConfig)changedWorkFlow{
+    //http,得到了当前模型的工作流信息
+    NSString* result;
+    NSString* urlStr = @"http://115.29.198.253:8088/WCF/Service/GetConfig/";
+    urlStr = [urlStr stringByAppendingFormat:@"%@",projectIDstr];
+    NSLog(@"%@",urlStr);
+    //NSURL *url = [NSURL URLWithString:@"http://www.baidu.com"];
+    NSURL *url = [NSURL URLWithString:urlStr];
+    NSURLRequest * request = [NSURLRequest requestWithURL:url];
+    NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+    //NSLog(@"%@",data);
+    result = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"%@",result);
+    
+    //处理得到的工作流数据
+    NSArray *arrysall= [result componentsSeparatedByString:@","];
+    NSString* strGatherAverage = arrysall[1];
+    NSString* strGatherLength = arrysall[2];
+    NSString* strGatherStyle = arrysall[3];
+    NSString* strLampMode = arrysall[4];
+    NSString* strMotorMode = arrysall[5];
+    NSString* strSampleMode = arrysall[6];
+    NSString* strWaveEnd = arrysall[7];
+    NSString* strWaveStart = arrysall[8];
+    NSString* strWaveWidth = arrysall[9];
+    NSString* strProductType = arrysall[10];
+    
+    NSArray *arrGatherAverage = [strGatherAverage componentsSeparatedByString:@":"];
+    NSString* gatherAverage = arrGatherAverage[1];//平均次数
+    NSLog(@"平均次数:%@",gatherAverage);
+    
+    NSArray *arrGatherLength = [strGatherLength componentsSeparatedByString:@":"];
+    NSString* gatherLength = arrGatherLength[1];//点数
+    NSLog(@"点数:%@",gatherLength);
+    
+    NSArray *arrGatherStyle = [strGatherStyle componentsSeparatedByString:@":"];
+    NSString* gatherStyle = arrGatherStyle[1];//扫描类型
+    NSLog(@"扫描类型:%@",gatherStyle);
+    
+    NSArray *arrWaveEnd = [strWaveEnd componentsSeparatedByString:@":"];
+    NSString* waveEnd = arrWaveEnd[1];//波尾
+    NSLog(@"波尾:%@",waveEnd);
+    
+    NSArray *arrWaveStart = [strWaveStart componentsSeparatedByString:@":"];
+    NSString* waveStart = arrWaveStart[1];//波头
+    NSLog(@"波头:%@",waveStart);
+    
+    NSArray *arrWaveWidth = [strWaveWidth componentsSeparatedByString:@":"];
+    NSString* waveWidth = arrWaveWidth[1];//频率宽度
+    NSLog(@"频率宽度:%@",waveWidth);
+    
+    NSArray *arrProductType = [strProductType componentsSeparatedByString:@":"];
+    NSString* productType = arrProductType[1];
+    productType = [productType substringWithRange:NSMakeRange(0, 1)];
+    NSLog(@"%@,设备名称，0为手持，1为小罐子，2为土星",productType);
+    
+    //外部工作流参数
+    NSArray *arrSampleMode = [strSampleMode componentsSeparatedByString:@":"];
+    NSString* sampleMode = arrSampleMode[1];
+    NSLog(@"固态液态:%@",sampleMode);
+    NSArray *arrLampMode = [strLampMode componentsSeparatedByString:@":"];
+    NSString* lampMode = arrLampMode[1];
+    NSLog(@"外置灯:%@",lampMode);
+    NSArray *arrMotorMode = [strMotorMode componentsSeparatedByString:@":"];
+    NSString* motorMode = arrMotorMode[1];
+    NSLog(@"转机:%@",motorMode);
+    
+    //拼接数据
+    ViewController *mainViewcontroller = [[ViewController alloc]init];
+    WorkFlowExt outsideWorkFlow;
+    NSMutableArray *returnArr = [[NSMutableArray alloc]init];
+    char returnWorkFlowData[212];
+    char returnWorkFlowDataExt[212];
+    //模型中已经获取到工作流
+    uScanConfig transConfig;
+    transConfig = changedWorkFlow;
+    //和http数据拼接
+    transConfig.slewScanCfg.section[0].num_patterns = 420;//点数当前都是420，后面差分成801
+    transConfig.slewScanCfg.section[0].width_px = [waveWidth intValue];
+    transConfig.slewScanCfg.section[0].section_scan_type = [gatherStyle intValue];
+    transConfig.slewScanCfg.head.num_repeats = [gatherAverage intValue];
+    transConfig.slewScanCfg.section[0].wavelength_start_nm = [waveStart intValue];
+    transConfig.slewScanCfg.section[0].wavelength_end_nm = [waveEnd intValue];
+    outsideWorkFlow.sampleobj = [sampleMode intValue];
+    outsideWorkFlow.lampmode = [lampMode intValue];
+    outsideWorkFlow.motormode = [motorMode intValue];
+    
+    //得到要写给蓝牙的数据块
+    bool getgetget = getScanConfigBuf(transConfig, outsideWorkFlow, returnWorkFlowData, returnWorkFlowDataExt);//得到数据块
+    NSLog(@"res:%d",getgetget);
+    
+    //处理得到的数据块，把获取的char数组赋给byte数组再转成NSdata，转成nsstring
+    //转换原来的工作流数据
+    NSUInteger len = 155;
+    Byte *byteData = (Byte*)malloc(len);
+    for (int i = 0; i < 155; i++) {
+        byteData[i] = returnWorkFlowData[i];
+    }
+    NSData *adata = [[NSData alloc] initWithBytes:byteData length:155];
+    NSLog(@"%@",adata);
+    NSString* cutStr = [Tools hexadecimalString:adata];
+    NSLog(@"%@",cutStr);
+    
+    //转换外部额外工作流的数据
+    Byte *byteDataExt = (Byte*)malloc(3);
+    for (int i = 0; i < 3; i++) {
+        byteDataExt[i] = returnWorkFlowDataExt[i];
+    }
+    NSData *adataExt = [[NSData alloc] initWithBytes:byteDataExt length:3];
+    NSLog(@"%@",adataExt);
+    NSString* cutStrExt = [Tools hexadecimalString:adataExt];
+    NSLog(@"额外工作流：%@",cutStrExt);
+    
+    NSString* numberone = @"009e000000";
+    
+    [returnArr addObject:numberone];
+    for (int i = 0; i < 9; i++) {
+        NSString *number = @"0";
+        NSString *nooo = [NSString stringWithFormat:@"%d",i+1];
+        number = [number stringByAppendingString:nooo];
+        NSLog(@"%@",number);
+        if (i != 8) {
+            NSString * data = [cutStr substringWithRange:NSMakeRange(i*38,38)];//一截19*2
+            number = [number stringByAppendingString:data];
+        }else{
+            NSString * data = [cutStr substringWithRange:NSMakeRange(i*38,6)];
+            number = [number stringByAppendingString:data];
+            number = [number stringByAppendingString:cutStrExt];
+        }
+        [returnArr addObject:number];
+    }
+    return returnArr;
+}
 
 
 

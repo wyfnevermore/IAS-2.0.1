@@ -5,6 +5,8 @@
 //  Created by wyfnevermore on 2017/3/28.
 //  Copyright © 2017年 wyfnevermore. All rights reserved.
 //
+#define SCREENWIDTH  [UIScreen mainScreen].bounds.size.width
+#define SCREENHEIGHT  [UIScreen mainScreen].bounds.size.height
 
 #import "ViewController.h"
 #import "WorkFlowViewController.h"
@@ -26,31 +28,39 @@
     _writeBtn.layer.cornerRadius = 30.5;//圆角的弧度
     _writeBtn.layer.borderWidth = 3.0f;
     _writeBtn.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
+    
+    [_disconnect setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_disconnect setBackgroundColor:[UIColor colorWithRed:20.0/255 green:61.0/255 blue:122.0/255 alpha:1]];
+    _disconnect.layer.cornerRadius = 15;//圆角的弧度
+    _disconnect.layer.borderWidth = 1.0f;
+    _disconnect.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
+    
     _typeLabel.layer.borderWidth = 4.0f;
     _typeLabel.layer.cornerRadius = 18;
     _typeLabel.layer.borderColor = [[UIColor redColor]CGColor];
     //_typeLabel.backgroundColor = [UIColor grayColor];
     [_uplabel setText:@"请打开蓝牙"];
-    workFlowPoints = 800;
-    workFlowPointsType = 2;//2即为把420点差分成800
+    workFlowPoints = 801;
+    workFlowPointsType = 2;//2即为把420点差分成801
     testduojiladeng = @"0";
     isdanliang = NO;
     
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];//返回按钮
     // Do any additional setup after loading the view, typically from a nib.
-    self.title = @"配置";
+    self.title = @"检测";
     _typePickView.hidden = YES;
     _done.hidden = YES;
     _deviceTableView.delegate = self;
     _deviceTableView.dataSource = self;
     _deviceTableView.hidden = YES;
-    _typePickView.backgroundColor  = [UIColor whiteColor];
+    _typePickView.backgroundColor  = [UIColor clearColor];
     _typePickView.delegate = self;
     _typePickView.dataSource = self;
-    pickArray = [[NSArray alloc] initWithObjects:@"乳胶",@"爬爬垫", @"珍珠粉",@"保鲜膜",@"奶嘴",@"药品",@"木材",@"奶粉",nil];
+    pickArray = [[NSArray alloc] initWithObjects:@"药(片剂)",@"药（胶囊）",nil];
     _typeLabel.userInteractionEnabled = YES;
-    projectIDStr = @"167";
-    formerType = @"167";
+    outsidelightornot = 0;
+    projectIDStr = @"565";
+    formerType = @"562";
     [Tools getModelRestData:projectIDStr];
     //初始化CBCentralManager
     workFlowArr = [[NSMutableArray alloc]init];
@@ -63,6 +73,18 @@
     self.myCentralManager = [[CBCentralManager alloc]initWithDelegate:self queue:nil options:options];
     UITapGestureRecognizer *labelTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
     [_typeLabel addGestureRecognizer:labelTapGestureRecognizer];
+    
+    //选择设备型号
+    _deviceType = 10;//因为默认为0，所以随便设一个，不然默认就是手持
+    [self showDeviceType];
+}
+
+//label点击事件
+-(void) labelTouchUpInside:(UITapGestureRecognizer *)recognizer{
+    UILabel *label = (UILabel*)recognizer.view;
+    _typePickView.hidden = NO;
+    _done.hidden = NO;
+    NSLog(@"当前类型：%@",label.text);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -138,8 +160,6 @@
 
 //4.连接
 - (void)connectClick{
-    workFlowCount = 0;
-    delayCount = 1;
     [self.myCentralManager connectPeripheral:_myPeripheral options:nil];
     [_uplabel setText:@"正在连接设备..."];
     [_uplabel setTextColor:[UIColor blackColor]];
@@ -151,20 +171,13 @@
     [self.myPeripheral discoverServices:nil];
     NSLog(@"扫描服务...");
     if (isReconnected == NO) {
-        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(setStartTitle) userInfo:nil repeats:NO];
+        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
         [[NSRunLoop currentRunLoop] addTimer:timerStart forMode:NSDefaultRunLoopMode];
     }else{
-        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(setStartTitle) userInfo:nil repeats:NO];
+        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
         [[NSRunLoop currentRunLoop] addTimer:timerStart forMode:NSDefaultRunLoopMode];
         isReconnected = NO;
     }
-}
-
--(void)setStartTitle{
-    [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
-    [_uplabel setText:@"设备已连接，请采集参比！"];
-    [_uplabel setTextColor:[UIColor blackColor]];
-    [self allReady];
 }
 
 //已发现服务
@@ -282,34 +295,20 @@
         if ([[list substringWithRange:NSMakeRange(0, 2)]containsString:@"1"] && workFlowArr.count == 0) {
             workFlowData = [Tools hexadecimalString:data];
             NSLog(@"配置列表：%@",workFlowData);
-            for (int i = 2; i < workFlowNumber * 4; i += 4) {
-                [workFlowArr addObject:[workFlowData substringWithRange:NSMakeRange(i, 4)]];
-                dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, delayCount*NSEC_PER_SEC);
-                dispatch_after(time, dispatch_get_main_queue(), ^{
-                    NSLog(@"定时排序操作");
-                    testbigstring = workFlowArr[workFlowCount];
-                    workFlowCount++;
-                    [self requestWorkFlowData];
-                    dispatch_time_t littletime = dispatch_time(DISPATCH_TIME_NOW, 0.5*NSEC_PER_SEC);
-                    dispatch_after(littletime, dispatch_get_main_queue(), ^{
-                        [self writeToPeripheral:testbigstring :_outsidesettingCharacteristic];
-                        if (workFlowCount == workFlowNumber) {
-                            [self writeToPeripheral:workFlowArr[0] :_activeConfigurationCharacteristic];
-                            NSLog(@"重置工作流");
-                        }
-                    });
-                });
-                delayCount++;
-            }
-            NSLog(@"工作流：%@",workFlowArr);
+            [workFlowArr addObject:[workFlowData substringWithRange:NSMakeRange(2, 4)]];
+            testbigstring = workFlowArr[0];
+            dispatch_time_t partTime = dispatch_time(DISPATCH_TIME_NOW, 1*NSEC_PER_SEC);//这里加延时是因为上一个到这个写入间隔太快，不加会出错
+            dispatch_after(partTime, dispatch_get_main_queue(), ^{
+                [self requestWorkFlowData];
+                NSLog(@"工作流：%@",workFlowArr);
+            });
+            
         }
     }
     //获取工作流配置参数
     if([characteristic.UUID.UUIDString containsString:@"4117"]){
         packageWorkFlowNo++;
         NSData* data = characteristic.value;
-        
-
         
         NSString *workFlowReturnData = [Tools hexadecimalString:data];
         NSLog(@"%d",packageWorkFlowNo);
@@ -357,7 +356,7 @@
         }
     }
     
-    //扫描，获取第一次写入时返回的数据，需再次写入，再次写入吼获得的才是光谱数据
+    //扫描，获取第一次写入时返回的数据，需再次写入，再次写入获得的才是光谱数据
     if([characteristic.UUID.UUIDString containsString:@"411D"]&&characteristic.properties == 0x10){
         NSData* data = characteristic.value;
         NSString* value = [Tools hexadecimalString:data];
@@ -371,17 +370,17 @@
             }
             NSData * myData = [NSData dataWithBytes:dataArr length:4];
             NSLog(@"%@",myData);
-            [_myPeripheral writeValue:myData forCharacteristic:_requestdataCharacteristic type:CBCharacteristicWriteWithResponse];
-            NSLog(@"characteristic : %@, data : %@,\nvalue : %@", characteristic, data, value);
+            dispatch_time_t littletime = dispatch_time(DISPATCH_TIME_NOW, 0.3*NSEC_PER_SEC);
+            dispatch_after(littletime, dispatch_get_main_queue(), ^{
+                [_myPeripheral writeValue:myData forCharacteristic:_requestdataCharacteristic type:CBCharacteristicWriteWithResponse];
+                NSLog(@"重新写入characteristic以获得光谱数据 : %@, data : %@,\nvalue : %@", characteristic, data, myData);
+            });
         }
     }
     //获取光谱数据并处理
     if([characteristic.UUID.UUIDString containsString:@"4128"]){
         packageNo = packageNo+1;
         NSData* data = characteristic.value;
-        //NSString* value = [Tools hexadecimalString:data];
-        //NSLog(@"characteristic : %@", characteristic);
-        //NSLog(@"\n%@\n 触发vlaue", value);
         //收到的byte数组
         NSUInteger len = [data length];
         Byte *byteData = (Byte*)malloc(len);
@@ -501,7 +500,7 @@
             //workFlowPoints = [[workFlowDetail[receStr] substringWithRange:NSMakeRange (3,3)]intValue];
             NSLog(@"点数：%d",workFlowPoints);
             [Tools activeWorkFlow:testbigstring :_myPeripheral :_activeConfigurationCharacteristic];
-            isdanliang = [Tools activeOutside:outsideArr :receStr :_myPeripheral :_duojiCharacteristic :_ladengCharacteristic];
+            //isdanliang = [Tools activeOutside:outsideArr :receStr :_myPeripheral :_duojiCharacteristic :_ladengCharacteristic];
             [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
         }
     }
@@ -520,8 +519,6 @@
     receStr = 0;
     isdanliang = NO;
     if (mCount != 0) { //用mcount是否为0来判断是掉线还是自己搜索设备
-        delayCount = 1;
-        workFlowCount = 0;
         //[_myCentralManager connectPeripheral:_myPeripheral options:nil];
         isReconnected = YES;
     }
@@ -639,24 +636,126 @@
 
 //连接完成后
 -(void)allReady{
+    [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
+    [_uplabel setText:@"设备已连接，请采集参比！"];
+    [_uplabel setTextColor:[UIColor blackColor]];
     [self writeToPeripheral:@"00" :_ladengCharacteristic];
     [self writeToPeripheral:@"00" :_duojiCharacteristic];
 }
 
-//label点击事件
--(void) labelTouchUpInside:(UITapGestureRecognizer *)recognizer{
-    UILabel *label = (UILabel*)recognizer.view;
-    _typePickView.hidden = NO;
-    _done.hidden = NO;
-    NSLog(@"当前类型：%@",label.text);
+//UI 选择设备型号
+- (void)showDeviceType{
+    //1. 取出window
+    UIWindow * window = [[UIApplication sharedApplication] keyWindow];
+    //2. 创建背景视图
+    _bgView = [[UIView alloc]init];
+    _bgView.frame = window.bounds;
+    //3. 背景颜色可以用多种方法
+    //_bgView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.4];
+    _bgView.backgroundColor = [UIColor colorWithWhite:0.1 alpha:0.7];
+    [window addSubview:_bgView];
+    //4. 把需要展示的控件添加上去
+    _deviceTypeChooseTitle = [[UILabel alloc]initWithFrame:CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0)];
+    [_deviceTypeChooseTitle setText:@"请选择设备型号"];
+    _deviceTypeChooseTitle.textAlignment = NSTextAlignmentCenter;//文字居中
+    _deviceTypeChooseTitle.textColor = [UIColor whiteColor];
+    [_deviceTypeChooseTitle setFont:[UIFont systemFontOfSize:27]];
+    [window addSubview:_deviceTypeChooseTitle];
+    
+    _xgzDeviceBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0)];
+    [_xgzDeviceBtn setTitle:@"小罐子" forState:UIControlStateNormal];
+    _xgzDeviceBtn.layer.cornerRadius = SCREENHEIGHT/30;//圆角的弧度
+    _xgzDeviceBtn.layer.borderWidth = 2.0f;
+    _xgzDeviceBtn.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
+    if (_deviceType == 1) {
+        [_xgzDeviceBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _xgzDeviceBtn.backgroundColor = [UIColor redColor];
+    }else{
+        [_xgzDeviceBtn setTitleColor:[UIColor colorWithRed:77.0/255 green:77.0/255 blue:77.0/255 alpha:1] forState:UIControlStateNormal];
+        _xgzDeviceBtn.backgroundColor = [UIColor whiteColor];
+    }
+    [window addSubview:_xgzDeviceBtn];
+    [_xgzDeviceBtn addTarget:self action:@selector(choosedXGZ) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    _scsDeviceBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0)];
+    [_scsDeviceBtn setTitle:@"手持式" forState:UIControlStateNormal];
+    _scsDeviceBtn.layer.cornerRadius = SCREENHEIGHT/30;//圆角的弧度
+    _scsDeviceBtn.layer.borderWidth = 2.0f;
+    _scsDeviceBtn.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
+    if (_deviceType == 0) {
+        [_scsDeviceBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _scsDeviceBtn.backgroundColor = [UIColor redColor];
+    }else{
+        [_scsDeviceBtn setTitleColor:[UIColor colorWithRed:77.0/255 green:77.0/255 blue:77.0/255 alpha:1] forState:UIControlStateNormal];
+        _scsDeviceBtn.backgroundColor = [UIColor whiteColor];
+    }
+    [window addSubview:_scsDeviceBtn];
+    [_scsDeviceBtn addTarget:self action:@selector(choosedSCS) forControlEvents:UIControlEventTouchUpInside];
+    
+    //5. 出现动画简单
+    [UIView animateWithDuration:0.3 animations:^{
+        _deviceTypeChooseTitle.frame = CGRectMake(SCREENWIDTH/8, SCREENHEIGHT*0.3, SCREENWIDTH*3/4, SCREENHEIGHT/15);
+        _xgzDeviceBtn.frame = CGRectMake(SCREENWIDTH/8, SCREENHEIGHT*0.43, SCREENWIDTH*3/4, SCREENHEIGHT/15);
+        _scsDeviceBtn.frame = CGRectMake(SCREENWIDTH/8, SCREENHEIGHT*0.55, SCREENWIDTH*3/4, SCREENHEIGHT/15);
+    }];
+    
 }
+
+- (void)hideAlertView{
+    //7.隐去动画简单
+    [UIView animateWithDuration:0.3 animations:^{
+        _deviceTypeChooseTitle.frame = CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0);
+        _xgzDeviceBtn.frame = CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0);
+        _scsDeviceBtn.frame = CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0);
+    }];
+    // 延迟几秒移除视图
+    [self performSelector:@selector(remove) withObject:nil afterDelay:0.3];
+}
+
+- (void)remove{
+    [_bgView removeFromSuperview];
+}
+
+-(void)choosedXGZ{
+    [_xgzDeviceBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    _xgzDeviceBtn.backgroundColor = [UIColor redColor];
+    [_scsDeviceBtn setTitleColor:[UIColor colorWithRed:77.0/255 green:77.0/255 blue:77.0/255 alpha:1] forState:UIControlStateNormal];
+    _scsDeviceBtn.backgroundColor = [UIColor whiteColor];
+    _deviceType = 1;
+    //[self hideAlertView];
+    //6.给背景添加一个手势，后续方便移除视图
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideAlertView)];
+    [_bgView addGestureRecognizer:tap];
+    NSLog(@"%ld，小罐子",(long)_deviceType);
+}
+
+-(void)choosedSCS{
+    [_scsDeviceBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    _scsDeviceBtn.backgroundColor = [UIColor redColor];
+    [_xgzDeviceBtn setTitleColor:[UIColor colorWithRed:77.0/255 green:77.0/255 blue:77.0/255 alpha:1] forState:UIControlStateNormal];
+    _xgzDeviceBtn.backgroundColor = [UIColor whiteColor];
+    _deviceType = 1;
+    _deviceType = 0;
+    //[self hideAlertView];
+    //6.给背景添加一个手势，后续方便移除视图
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideAlertView)];
+    [_bgView addGestureRecognizer:tap];
+    NSLog(@"%ld，手持式",(long)_deviceType);
+}
+
 
 - (IBAction)done:(id)sender {
     _typePickView.hidden = YES;
     _done.hidden = YES;
     NSString *type = _typeLabel.text;
-    projectIDStr = [Tools setType:type :_typePic];
-    NSLog(@"%@",projectIDStr);
+    if (outsidelightornot == 0) {
+        outsidelightornot = 2;
+    }else{
+        outsidelightornot = 2;
+    }
+    projectIDStr = [Tools setModelType:type :_typePic:_deviceType];
+    NSLog(@"模型ID改为：%@",projectIDStr);
 }
 
 - (IBAction)writeBtn:(id)sender {
@@ -691,38 +790,6 @@
     }
 }
 
-- (IBAction)ladeng:(id)sender {
-    if ([testduojiladeng intValue] == 1) {
-        testduojiladeng = @"00";
-    }else{
-        testduojiladeng = @"01";
-    }
-    NSData *writeValue;
-    writeValue = [Tools dataWithHexstring:testduojiladeng];
-    NSLog(@"写入%@",writeValue);
-    if (_ladengCharacteristic == nil) {
-        NSLog(@"未找到UUID");
-    }else{
-        NSLog(@"要写入的charayic，%@",_ladengCharacteristic);
-        [_myPeripheral writeValue:writeValue forCharacteristic:_ladengCharacteristic type:CBCharacteristicWriteWithResponse];
-    }
-}
-
-- (IBAction)duoji:(id)sender {
-    if ([testduojiladeng intValue] == 1) {
-        testduojiladeng = @"00";
-    }else{
-        testduojiladeng = @"01";
-    }
-    NSData *writeValue;
-    writeValue = [Tools dataWithHexstring:testduojiladeng];
-    NSLog(@"写入%@",writeValue);
-    if (_duojiCharacteristic == nil) {
-        NSLog(@"未找到UUID");
-    }else{
-        [_myPeripheral writeValue:writeValue forCharacteristic:_duojiCharacteristic type:CBCharacteristicWriteWithResponse];
-    }
-}
 
 - (IBAction)disconnect:(id)sender {
     if (_myPeripheral != nil) {
@@ -730,73 +797,46 @@
     }
 }
 
-- (IBAction)transWorkFlow:(id)sender {
-     if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected && _workFlowForNow.count != 0) {
-         NSLog(@"%@",_workFlowForNow);
-         for (int i = 0; i < _workFlowForNow.count; i++) {
-             [self writeToPeripheral:_workFlowForNow[i] :_workFlowForNowCharacteristic];
-         }
-     }
-}
 
-- (IBAction)getData:(id)sender {
+- (IBAction)xiaoguanzi:(id)sender {
     if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected) {
-        [_workFlowForNow removeAllObjects];
-        NSString* numberone = @"009e000000";
-        [_workFlowForNow addObject:numberone];
-        changedScanConfigWorkFlow = scanConfigWorkFlow;
-        
-        //假装已经获取到工作流
-        uScanConfig TransConfig = changedScanConfigWorkFlow;
-        TransConfig.slewScanCfg.head.num_repeats = 2;
-        changedScanConfigWorkFlow = TransConfig;
-        
-        outsideWorkFlow.sampleobj = 0;
-        outsideWorkFlow.lampmode = 1;
-        outsideWorkFlow.motormode = 1;
-        
-        bool getgetget = getScanConfigBuf(changedScanConfigWorkFlow, outsideWorkFlow, returnWorkFlowBlueData, returnWorkFlowBlueDataExt);
-        NSLog(@"res:%d",getgetget);
-        
-        //把获取的char数组赋给byte数组再转成NSdata，转成nsstring；
-        //转原来的工作流数据
-        NSUInteger len = 155;
-        Byte *byteData = (Byte*)malloc(len);
-        for (int i = 0; i < 155; i++) {
-            byteData[i] = returnWorkFlowBlueData[i];
-        }
-        NSData *adata = [[NSData alloc] initWithBytes:byteData length:155];
-        NSLog(@"%@",adata);
-        NSString* cutStr = [Tools hexadecimalString:adata];
-        NSLog(@"%@",cutStr);
-        
-        //转外部额外工作流的数据
-        Byte *byteDataExt = (Byte*)malloc(3);
-        for (int i = 0; i < 3; i++) {
-            byteDataExt[i] = returnWorkFlowBlueDataExt[i];
-        }
-        NSData *adataExt = [[NSData alloc] initWithBytes:byteDataExt length:3];
-        NSLog(@"%@",adataExt);
-        NSString* cutStrExt = [Tools hexadecimalString:adataExt];
-        NSLog(@"额外工作流：%@",cutStrExt);
-        
-        for (int i = 0; i < 9; i++) {
-            NSString *number = @"0";
-            NSString *nooo = [NSString stringWithFormat:@"%d",i+1];
-            number = [number stringByAppendingString:nooo];
-            NSLog(@"%@",number);
-            if (i != 8) {
-                NSString * data = [cutStr substringWithRange:NSMakeRange(i*38,38)];//一截19*2
-                number = [number stringByAppendingString:data];
-            }else{
-                NSString * data = [cutStr substringWithRange:NSMakeRange(i*38,6)];
-                number = [number stringByAppendingString:data];
-                number = [number stringByAppendingString:cutStrExt];
-            }
-            [_workFlowForNow addObject:number];
-            NSLog(@"%@",_workFlowForNow);
-        }
+        outsidelightornot = 2;
+        projectIDStr = @"562";
+        _workFlowForNow = [Tools getModelRestDataEverytime:projectIDStr :changedScanConfigWorkFlow];
+        NSLog(@"得到的云端蓝牙工作流数据块：%@",_workFlowForNow);
+        [self getEXTworkflow];//发送给蓝牙
+        //通知框
+        NSString*title;
+        title = @"模型更改为：";
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
 }
+
+
+- (IBAction)chooseDevice:(id)sender {
+    [self showDeviceType];
+}
+
+
+-(void)getEXTworkflow{
+    for (int i = 0; i < _workFlowForNow.count; i++) {
+        [self writeToPeripheral:_workFlowForNow[i] :_workFlowForNowCharacteristic];
+    }
+    NSString* extLight = _workFlowForNow[_workFlowForNow.count-1];
+    extLight = [extLight substringWithRange:NSMakeRange(11, 1)];
+    NSLog(@"%@",extLight);
+    if ([extLight intValue] == 1) {
+        [self writeToPeripheral:@"01" :_ladengCharacteristic];
+        isdanliang = NO;
+    }else if ([extLight intValue] == 2){
+        isdanliang = YES;
+    }else{
+        isdanliang = NO;
+    }
+}
+
 
 @end

@@ -16,6 +16,7 @@
 
 @interface ViewController : UIViewController<CBCentralManagerDelegate, CBPeripheralDelegate,UITableViewDataSource, UITableViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 {
+    
     uScanConfig scanConfigWorkFlow;//用来接收设备中的工作流
     uScanConfig changedScanConfigWorkFlow;
     WorkFlowExt outsideWorkFlow;
@@ -65,10 +66,11 @@
     int workFlowPoints;
     int workFlowPointsType;
     int outsidedatapackageNumber;
-    int testnumber;
+    int outsidelightornot;
     NSString *bluedatastr;
+    
 }
-
+//BLE
 @property (strong, nonatomic) CBCentralManager* myCentralManager;
 @property (strong, nonatomic) NSMutableArray* myPeripherals;
 @property (strong, nonatomic) CBPeripheral* myPeripheral;
@@ -85,6 +87,15 @@
 @property (strong, nonatomic) CBCharacteristic* duojiCharacteristic;
 @property (strong, nonatomic) CBCharacteristic* outsidesettingCharacteristic;
 @property (strong, nonatomic) CBCharacteristic* workFlowForNowCharacteristic;
+
+//UI相关
+@property (strong, nonatomic)UIView *bgView;//半透明背景
+@property (strong, nonatomic)UIView *alertView;//假设为弹窗
+@property (strong, nonatomic)UIButton *xgzDeviceBtn;//小罐子
+@property (strong, nonatomic)UIButton *scsDeviceBtn;//手持式
+@property (strong, nonatomic)UILabel *deviceTypeChooseTitle;//@"请选择设备型号"
+@property (assign, nonatomic)NSInteger deviceType;
+
 @property (weak, nonatomic) IBOutlet UILabel *uplabel;
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
 @property (weak, nonatomic) IBOutlet UIButton *writeBtn;
@@ -92,15 +103,19 @@
 @property (weak, nonatomic) IBOutlet UIPickerView *typePickView;
 @property (weak, nonatomic) IBOutlet UITableView *deviceTableView;
 @property (weak, nonatomic) IBOutlet UIImageView *typePic;
+@property (weak, nonatomic) IBOutlet UIButton *disconnect;
+
 
 - (IBAction)done:(id)sender;
 - (IBAction)writeBtn:(id)sender;
 
-- (IBAction)ladeng:(id)sender;
-- (IBAction)duoji:(id)sender;
-- (IBAction)disconnect:(id)sender;
-- (IBAction)transWorkFlow:(id)sender;
-- (IBAction)getData:(id)sender;
 
+
+- (IBAction)disconnect:(id)sender;
+- (IBAction)chooseDevice:(id)sender;
+
+
+
+-(void) getworkflow;
 @end
 
