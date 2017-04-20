@@ -36,7 +36,7 @@
     _disconnect.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
     
     _typeLabel.layer.borderWidth = 4.0f;
-    _typeLabel.layer.cornerRadius = 18;
+    _typeLabel.layer.cornerRadius = 25;
     _typeLabel.layer.borderColor = [[UIColor redColor]CGColor];
     //_typeLabel.backgroundColor = [UIColor grayColor];
     [_uplabel setText:@"请打开蓝牙"];
@@ -56,10 +56,9 @@
     _typePickView.backgroundColor  = [UIColor clearColor];
     _typePickView.delegate = self;
     _typePickView.dataSource = self;
-    pickArray = [[NSArray alloc] initWithObjects:@"药(片剂)",@"药（胶囊）",nil];
+    pickArray = [[NSArray alloc] initWithObjects:@"片剂",@"胶囊",nil];
     _typeLabel.userInteractionEnabled = YES;
-    outsidelightornot = 0;
-    projectIDStr = @"565";
+    projectIDStr = @"581";
     formerType = @"562";
     [Tools getModelRestData:projectIDStr];
     //初始化CBCentralManager
@@ -75,13 +74,14 @@
     [_typeLabel addGestureRecognizer:labelTapGestureRecognizer];
     
     //选择设备型号
-    _deviceType = 10;//因为默认为0，所以随便设一个，不然默认就是手持
+    _deviceType = 100;//因为默认为0，所以随便设一个，不然默认就是手持,也用来判断是不是第一次选择
     [self showDeviceType];
 }
 
 //label点击事件
 -(void) labelTouchUpInside:(UITapGestureRecognizer *)recognizer{
     UILabel *label = (UILabel*)recognizer.view;
+    _typePic.hidden = YES;
     _typePickView.hidden = NO;
     _done.hidden = NO;
     NSLog(@"当前类型：%@",label.text);
@@ -397,12 +397,14 @@
                             isCbInited = true;
                             formerType = projectIDStr;
                             [_writeBtn setTitle:@"采集样品" forState:UIControlStateNormal];
+                            _writeBtn.userInteractionEnabled = YES;
                             break;
                         }
                         case 1:{
                             bool isGetDataYP = getDLPData(returnData,waveLength, intentsities,workFlowPointsType);
                             NSLog(@"%d",isGetDataYP);
                             [_uplabel setText:@"采集样品完成！"];
+                            _writeBtn.userInteractionEnabled = YES;
                             dataString = [self getAbs:cb intentsities:intentsities];
                             segueToResult = [Tools getRestData:projectIDStr :dataString];
                             [_uplabel setText:segueToResult];
@@ -437,7 +439,7 @@
                 aBS[i] = 0;
             }else if(mintentsities[i]<=0){
                 aBS[i] = 0;
-            }else {
+            }else{
                 aBS[i] = log10(mcb[i]/mintentsities[i]);
             }
         }
@@ -516,6 +518,9 @@
     [workFlowName removeAllObjects];
     [workFlowDetail removeAllObjects];
     [outsideArr removeAllObjects];
+    _writeBtn.userInteractionEnabled =YES;
+    _deviceType = 100;
+    [self showDeviceType];
     receStr = 0;
     isdanliang = NO;
     if (mCount != 0) { //用mcount是否为0来判断是掉线还是自己搜索设备
@@ -636,11 +641,13 @@
 
 //连接完成后
 -(void)allReady{
+    [self writeToPeripheral:@"00" :_ladengCharacteristic];
+    [self writeToPeripheral:@"00" :_duojiCharacteristic];
+    [self chooseCurrentProject];
+    
     [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
     [_uplabel setText:@"设备已连接，请采集参比！"];
     [_uplabel setTextColor:[UIColor blackColor]];
-    [self writeToPeripheral:@"00" :_ladengCharacteristic];
-    [self writeToPeripheral:@"00" :_duojiCharacteristic];
 }
 
 //UI 选择设备型号
@@ -652,7 +659,7 @@
     _bgView.frame = window.bounds;
     //3. 背景颜色可以用多种方法
     //_bgView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.4];
-    _bgView.backgroundColor = [UIColor colorWithWhite:0.1 alpha:0.7];
+    _bgView.backgroundColor = [UIColor colorWithWhite:0.1 alpha:1.0];
     [window addSubview:_bgView];
     //4. 把需要展示的控件添加上去
     _deviceTypeChooseTitle = [[UILabel alloc]initWithFrame:CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0)];
@@ -699,7 +706,12 @@
         _xgzDeviceBtn.frame = CGRectMake(SCREENWIDTH/8, SCREENHEIGHT*0.43, SCREENWIDTH*3/4, SCREENHEIGHT/15);
         _scsDeviceBtn.frame = CGRectMake(SCREENWIDTH/8, SCREENHEIGHT*0.55, SCREENWIDTH*3/4, SCREENHEIGHT/15);
     }];
-    
+    if (_deviceType != 100) {
+        //6.给背景添加一个手势，后续方便移除视图
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideAlertView)];
+        [_bgView addGestureRecognizer:tap];
+        NSLog(@"设备型号：%ld，1为小罐子，0为手持",(long)_deviceType);
+    }
 }
 
 - (void)hideAlertView{
@@ -711,6 +723,7 @@
     }];
     // 延迟几秒移除视图
     [self performSelector:@selector(remove) withObject:nil afterDelay:0.3];
+    [self chooseCurrentProject];
 }
 
 - (void)remove{
@@ -723,11 +736,11 @@
     [_scsDeviceBtn setTitleColor:[UIColor colorWithRed:77.0/255 green:77.0/255 blue:77.0/255 alpha:1] forState:UIControlStateNormal];
     _scsDeviceBtn.backgroundColor = [UIColor whiteColor];
     _deviceType = 1;
-    //[self hideAlertView];
+    NSLog(@"%ld，手持式",(long)_deviceType);
+
     //6.给背景添加一个手势，后续方便移除视图
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideAlertView)];
     [_bgView addGestureRecognizer:tap];
-    NSLog(@"%ld，小罐子",(long)_deviceType);
 }
 
 -(void)choosedSCS{
@@ -735,27 +748,32 @@
     _scsDeviceBtn.backgroundColor = [UIColor redColor];
     [_xgzDeviceBtn setTitleColor:[UIColor colorWithRed:77.0/255 green:77.0/255 blue:77.0/255 alpha:1] forState:UIControlStateNormal];
     _xgzDeviceBtn.backgroundColor = [UIColor whiteColor];
-    _deviceType = 1;
     _deviceType = 0;
+    NSLog(@"%ld，小罐子",(long)_deviceType);
     //[self hideAlertView];
+    
     //6.给背景添加一个手势，后续方便移除视图
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideAlertView)];
     [_bgView addGestureRecognizer:tap];
-    NSLog(@"%ld，手持式",(long)_deviceType);
 }
 
+-(void)chooseCurrentProject{//选择当前模型ID，如果是连接状态，写入工作流
+    NSString *typeStr = _typeLabel.text;
+    projectIDStr = [Tools setModelType:typeStr :_typePic :_deviceType];
+    NSLog(@"模型ID改为：%@",projectIDStr);
+    if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected){
+        _workFlowForNow = [Tools getModelRestDataEverytime:projectIDStr :changedScanConfigWorkFlow :_deviceType];
+        NSLog(@"得到的云端蓝牙工作流数据块：%@",_workFlowForNow);
+        [self sendWorkFlowToBle];//发送给蓝牙，设定当前工作流
+        [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
+    }
+}
 
 - (IBAction)done:(id)sender {
     _typePickView.hidden = YES;
     _done.hidden = YES;
-    NSString *type = _typeLabel.text;
-    if (outsidelightornot == 0) {
-        outsidelightornot = 2;
-    }else{
-        outsidelightornot = 2;
-    }
-    projectIDStr = [Tools setModelType:type :_typePic:_deviceType];
-    NSLog(@"模型ID改为：%@",projectIDStr);
+    _typePic.hidden = NO;
+    [self chooseCurrentProject];
 }
 
 - (IBAction)writeBtn:(id)sender {
@@ -764,20 +782,21 @@
         packageNo = 1;
         returnByteNo = 0;
         init = 1;
-        NSString *obj = @"01";
-        [self writeToPeripheral:obj :_duojiCharacteristic];
+        [self writeToPeripheral:@"01" :_duojiCharacteristic];
         if (isdanliang == YES) {
-            [self writeToPeripheral:obj :_ladengCharacteristic];
+            [self writeToPeripheral:@"01" :_ladengCharacteristic];
         }
-        NSString* value = @"00";
-        [self writeToPeripheral:value :_startscanCharacteristic];
         if ([_writeBtn.currentTitle containsString:@"参比"]) {
+            _writeBtn.userInteractionEnabled = NO;
             statement = 0;
             [_uplabel setText:@"正在采集参比..."];
         }else {
+            _writeBtn.userInteractionEnabled = NO;
             statement = 1;
             [_uplabel setText:@"正在采集样品..."];
         }
+        NSString* value = @"00";
+        [self writeToPeripheral:value :_startscanCharacteristic];
     }else{//搜索设备(连接设备)[connect]
         mCount = 0;
         [self.myCentralManager stopScan];
@@ -797,31 +816,12 @@
     }
 }
 
-
-- (IBAction)xiaoguanzi:(id)sender {
-    if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected) {
-        outsidelightornot = 2;
-        projectIDStr = @"562";
-        _workFlowForNow = [Tools getModelRestDataEverytime:projectIDStr :changedScanConfigWorkFlow];
-        NSLog(@"得到的云端蓝牙工作流数据块：%@",_workFlowForNow);
-        [self getEXTworkflow];//发送给蓝牙
-        //通知框
-        NSString*title;
-        title = @"模型更改为：";
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-        [alertController addAction:okAction];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }
-}
-
-
 - (IBAction)chooseDevice:(id)sender {
-    [self showDeviceType];
+    //[self showDeviceType];
 }
 
 
--(void)getEXTworkflow{
+-(void)sendWorkFlowToBle{
     for (int i = 0; i < _workFlowForNow.count; i++) {
         [self writeToPeripheral:_workFlowForNow[i] :_workFlowForNowCharacteristic];
     }

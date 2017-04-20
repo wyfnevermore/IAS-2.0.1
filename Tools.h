@@ -27,6 +27,6 @@
 
 + (void)getModelRestData:(NSString*)projectIDstr;
 
-+ (NSMutableArray*)getModelRestDataEverytime:(NSString*)projectIDstr:(uScanConfig)changedWorkFlow;
++ (NSMutableArray*)getModelRestDataEverytime:(NSString*)projectIDstr :(uScanConfig)changedWorkFlow :(NSInteger)devicetype;
 
 @end

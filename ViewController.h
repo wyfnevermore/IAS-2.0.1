@@ -66,7 +66,6 @@
     int workFlowPoints;
     int workFlowPointsType;
     int outsidedatapackageNumber;
-    int outsidelightornot;
     NSString *bluedatastr;
     
 }

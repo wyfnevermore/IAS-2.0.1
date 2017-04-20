@@ -15,41 +15,17 @@
 + (NSString*)setModelType:(NSString*)typeStr : (UIImageView*)typeImg :(NSInteger)deviceType{
     NSString *ProjectID;
     if (deviceType == 0) {
-        if ([typeStr containsString:@"乳胶"]) {
-            [typeImg setImage:[UIImage imageNamed:@"rujiao"]];
-            ProjectID = @"234";
-        }
-        if ([typeStr containsString:@"木材"]) {
-            [typeImg setImage:[UIImage imageNamed:@"mucai"]];
-            ProjectID = @"167";
-        }
-        if ([typeStr containsString:@"爬爬垫"]) {
-            [typeImg setImage:[UIImage imageNamed:@"papadian"]];
-            ProjectID = @"257";
-        }
-        if ([typeStr containsString:@"奶嘴"]) {
-            [typeImg setImage:[UIImage imageNamed:@"naizui"]];
-            ProjectID = @"265";
-        }
-        if ([typeStr containsString:@"珍珠粉"]) {
-            [typeImg setImage:[UIImage imageNamed:@"zhenzhufen"]];
-            ProjectID = @"252";
-        }
-        if ([typeStr containsString:@"保鲜膜"]) {
-            [typeImg setImage:[UIImage imageNamed:@"baoxianmo"]];
-            ProjectID = @"301";
-        }
-        if ([typeStr containsString:@"药品"]) {
+        if ([typeStr containsString:@"片"]) {
             [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
-            ProjectID = @"566";
+            ProjectID = @"581";
         }
-        if ([typeStr containsString:@"奶粉"]) {
-            [typeImg setImage:[UIImage imageNamed:@"naifen"]];
-            ProjectID = @"87";
+        if ([typeStr containsString:@"胶"]) {
+            [typeImg setImage:[UIImage imageNamed:@"jiaonang"]];
+            ProjectID = @"605";
         }
     }else if (deviceType == 1){
-        [typeImg setImage:[UIImage imageNamed:@"jiaonang"]];
-        ProjectID = @"234";
+        [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
+        ProjectID = @"581";
     }
     return ProjectID;
 }
@@ -153,77 +129,10 @@
     if ([receData containsString:@"异常"]) {
         segueToResult = @"数据异常";
     }else{
-        switch ([projectIDstr intValue]) {
-                //其它
-            case 0:{
-                NSArray *arrys01= [receData componentsSeparatedByString:@"@"];
-                NSString* str01=(NSString *)arrys01[2];
-                NSArray *arrys02= [str01 componentsSeparatedByString:@"\""];
-                NSString* str02=(NSString *)arrys02[0];
-                NSLog(@"%@",str02);
-                segueToResult = str02;
-                break;
-            }
-                //药品ok
-            case 471:{
-                NSArray *arrys471= [receData componentsSeparatedByString:@"\""];
-                NSString* str471=(NSString *)arrys471[3];
-                NSLog(@"%@",str471);
-                segueToResult = str471;
-                break;
-            }
-                //乳胶
-            case 234:{
-                NSArray *arrys234= [receData componentsSeparatedByString:@"\""];
-                NSString* str234=(NSString *)arrys234[3];
-                NSLog(@"%@",str234);
-                segueToResult = str234;
-                break;
-            }
-                //爬爬垫
-            case 257:{
-                NSArray *arrys257= [receData componentsSeparatedByString:@"\""];
-                NSString* str257=(NSString *)arrys257[3];
-                NSLog(@"%@",str257);
-                segueToResult = str257;
-                break;
-            }
-                //奶嘴
-            case 265:{
-                NSArray *arrys265= [receData componentsSeparatedByString:@"\""];
-                NSString* str265=(NSString *)arrys265[3];
-                NSLog(@"%@",str265);
-                segueToResult = str265;
-                break;
-            }
-                //珍珠粉
-            case 252:{
-                NSArray *arrys252= [receData componentsSeparatedByString:@"\""];
-                NSString* str252=(NSString *)arrys252[3];
-                NSLog(@"%@",str252);
-                if ([str252 containsString:@"G"]) {
-                    segueToResult = @"优质珍珠粉";
-                }else if ([str252 containsString:@"L"]){
-                    segueToResult = @"劣质珍珠粉";
-                }
-                break;
-            }
-                //保鲜膜
-            case 301:{
-                NSArray *arrys301= [receData componentsSeparatedByString:@"\""];
-                NSString* str301=(NSString *)arrys301[3];
-                NSLog(@"%@",str301);
-                segueToResult = str301;
-                break;
-            }
-            default:{
-                NSArray *arrys1= [receData componentsSeparatedByString:@"\""];
-                NSString* str1=(NSString *)arrys1[3];
-                NSLog(@"%@",str1);
-                segueToResult = str1;
-                break;
-            }
-        }
+        NSArray *arrys1= [receData componentsSeparatedByString:@"\""];
+        NSString* str1=(NSString *)arrys1[3];
+        NSLog(@"%@",str1);
+        segueToResult = str1;
     }
     return segueToResult;
 }
@@ -250,7 +159,7 @@
 }
 
 //从模型中获取工作流
-+ (NSMutableArray*)getModelRestDataEverytime:(NSString*)projectIDstr :(uScanConfig)changedWorkFlow{
++ (NSMutableArray*)getModelRestDataEverytime:(NSString*)projectIDstr :(uScanConfig)changedWorkFlow :(NSInteger)devicetype{
     //http,得到了当前模型的工作流信息
     NSString* result;
     NSString* urlStr = @"http://115.29.198.253:8088/WCF/Service/GetConfig/";
@@ -360,7 +269,12 @@
     }
     NSData *adataExt = [[NSData alloc] initWithBytes:byteDataExt length:3];
     NSLog(@"%@",adataExt);
-    NSString* cutStrExt = [Tools hexadecimalString:adataExt];
+    NSString* cutStrExt;
+    if (devicetype == 0) {
+        cutStrExt = @"000000";
+    }else if (devicetype == 1){
+        cutStrExt = [Tools hexadecimalString:adataExt];
+    }
     NSLog(@"额外工作流：%@",cutStrExt);
     
     NSString* numberone = @"009e000000";
