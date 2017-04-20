@@ -20,7 +20,7 @@
         }
         if ([typeStr containsString:@"胶"]) {
             [typeImg setImage:[UIImage imageNamed:@"jiaonang"]];
-            ProjectID = @"605";
+            ProjectID = @"616";
         }
     }else if (deviceType == 1){
         [typeImg setImage:[UIImage imageNamed:@"yaopian"]];

@@ -25,7 +25,7 @@
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:22],NSForegroundColorAttributeName:[UIColor whiteColor]}];
     [_writeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_writeBtn setBackgroundColor:[UIColor colorWithRed:20.0/255 green:61.0/255 blue:122.0/255 alpha:1]];
-    _writeBtn.layer.cornerRadius = 30.5;//圆角的弧度
+    _writeBtn.layer.cornerRadius = SCREENHEIGHT*0.041;//圆角的弧度
     _writeBtn.layer.borderWidth = 3.0f;
     _writeBtn.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
     
@@ -36,7 +36,7 @@
     _disconnect.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
     
     _typeLabel.layer.borderWidth = 4.0f;
-    _typeLabel.layer.cornerRadius = 25;
+    _typeLabel.layer.cornerRadius = SCREENHEIGHT*0.034;
     _typeLabel.layer.borderColor = [[UIColor redColor]CGColor];
     //_typeLabel.backgroundColor = [UIColor grayColor];
     [_uplabel setText:@"请打开蓝牙"];
@@ -76,6 +76,14 @@
     //选择设备型号
     _deviceType = 100;//因为默认为0，所以随便设一个，不然默认就是手持,也用来判断是不是第一次选择
     [self showDeviceType];
+    _uplabel.frame = CGRectMake(SCREENWIDTH*0.084, SCREENHEIGHT*0.2, SCREENWIDTH*0.857, SCREENHEIGHT*0.06);
+    _deviceTableView.frame = CGRectMake(SCREENWIDTH*0.097, SCREENHEIGHT*0.242, SCREENWIDTH*0.857, SCREENHEIGHT*0.516);
+    _typePic.frame = CGRectMake(SCREENWIDTH*0.234, SCREENHEIGHT*0.355, SCREENWIDTH*0.531, SCREENHEIGHT*0.299);
+    _typePickView.frame = CGRectMake(0, SCREENHEIGHT*0.355, SCREENWIDTH, SCREENHEIGHT*0.299);
+    _writeBtn.frame = CGRectMake(SCREENWIDTH*0.169, SCREENHEIGHT*0.817, SCREENWIDTH*0.664, SCREENHEIGHT*0.083);
+    _typelabelleft.frame = CGRectMake(SCREENWIDTH*0.254, SCREENHEIGHT*0.694, SCREENWIDTH*0.4, SCREENHEIGHT*0.041);
+    _done.frame = CGRectMake(SCREENWIDTH*0.8, SCREENHEIGHT*0.599, SCREENWIDTH*0.2, SCREENHEIGHT*0.1);
+    _typeLabel.frame = CGRectMake(SCREENWIDTH*0.519, SCREENHEIGHT*0.681, SCREENWIDTH*0.242, SCREENHEIGHT*0.068);
 }
 
 //label点击事件

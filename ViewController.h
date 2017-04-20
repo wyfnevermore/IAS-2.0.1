@@ -97,6 +97,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *uplabel;
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *typelabelleft;
 @property (weak, nonatomic) IBOutlet UIButton *writeBtn;
 @property (weak, nonatomic) IBOutlet UIButton *done;
 @property (weak, nonatomic) IBOutlet UIPickerView *typePickView;
