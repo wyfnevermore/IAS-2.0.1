@@ -7,7 +7,6 @@
 //
 
 #import "Tools.h"
-#import "ViewController.h"
 
 @implementation Tools
 
@@ -139,7 +138,6 @@
 
 //从模型中获取工作流
 + (void)getModelRestData:(NSString*)projectIDstr{
-    ViewController *mainViewcontroller = [[ViewController alloc]init];
     ///*
     NSString*result;
     NSString* urlStr = @"http://115.29.198.253:8088/WCF/Service/GetConfig/";
@@ -227,7 +225,6 @@
     NSLog(@"转机:%@",motorMode);
     
     //拼接数据
-    ViewController *mainViewcontroller = [[ViewController alloc]init];
     WorkFlowExt outsideWorkFlow;
     NSMutableArray *returnArr = [[NSMutableArray alloc]init];
     char returnWorkFlowData[212];
@@ -247,8 +244,8 @@
     outsideWorkFlow.motormode = [motorMode intValue];
     
     //得到要写给蓝牙的数据块
-    bool getgetget = getScanConfigBuf(transConfig, outsideWorkFlow, returnWorkFlowData, returnWorkFlowDataExt);//得到数据块
-    NSLog(@"res:%d",getgetget);
+    bool getdata = getScanConfigBuf(transConfig, outsideWorkFlow, returnWorkFlowData, returnWorkFlowDataExt);//得到数据块
+    NSLog(@"res:%d",getdata);
     
     //处理得到的数据块，把获取的char数组赋给byte数组再转成NSdata，转成nsstring
     //转换原来的工作流数据
