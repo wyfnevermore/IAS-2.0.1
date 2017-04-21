@@ -76,9 +76,9 @@
     //选择设备型号
     _deviceType = 100;//因为默认为0，所以随便设一个，不然默认就是手持,也用来判断是不是第一次选择
     [self showDeviceType];
-    _uplabel.frame = CGRectMake(SCREENWIDTH*0.084, SCREENHEIGHT*0.2, SCREENWIDTH*0.857, SCREENHEIGHT*0.06);
-    _deviceTableView.frame = CGRectMake(SCREENWIDTH*0.097, SCREENHEIGHT*0.242, SCREENWIDTH*0.857, SCREENHEIGHT*0.516);
-    _typePic.frame = CGRectMake(SCREENWIDTH*0.234, SCREENHEIGHT*0.355, SCREENWIDTH*0.531, SCREENHEIGHT*0.299);
+    _uplabel.frame = CGRectMake(0, SCREENHEIGHT*0.2, SCREENWIDTH, SCREENHEIGHT*0.06);
+    _deviceTableView.frame = CGRectMake(SCREENWIDTH*0.097, SCREENHEIGHT*0.2, SCREENWIDTH*0.857, SCREENHEIGHT*0.56);
+    _typePic.frame = CGRectMake(SCREENWIDTH*0.198, SCREENHEIGHT*0.3, SCREENWIDTH*0.604, SCREENHEIGHT*0.34);
     _typePickView.frame = CGRectMake(0, SCREENHEIGHT*0.355, SCREENWIDTH, SCREENHEIGHT*0.299);
     _writeBtn.frame = CGRectMake(SCREENWIDTH*0.169, SCREENHEIGHT*0.817, SCREENWIDTH*0.664, SCREENHEIGHT*0.083);
     _typelabelleft.frame = CGRectMake(SCREENWIDTH*0.254, SCREENHEIGHT*0.694, SCREENWIDTH*0.4, SCREENHEIGHT*0.041);
@@ -104,12 +104,21 @@
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central{
     switch (central.state) {
         case CBManagerStatePoweredOn:
-            [_uplabel setText:@"蓝牙已打开, 请搜索设备!"];
+            [_uplabel setText:@"蓝牙打开, 请搜索设备!"];
             NSLog(@"蓝牙已打开, 请扫描外设!");
             [_uplabel setTextColor:[UIColor blackColor]];
             break;
         default:
-            [_uplabel setText:@"请打开蓝牙！"];
+            //通知框
+            NSString *title = @"请打开蓝牙！";
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleAlert];
+            //UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
+            //[alertController addAction:cancelAction];
+            [alertController addAction:okAction];
+            [self presentViewController:alertController animated:YES completion:nil];
+
+            [_uplabel setText:title];
             [_uplabel setTextColor:[UIColor redColor]];
             break;
     }
@@ -179,10 +188,10 @@
     [self.myPeripheral discoverServices:nil];
     NSLog(@"扫描服务...");
     if (isReconnected == NO) {
-        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
+        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
         [[NSRunLoop currentRunLoop] addTimer:timerStart forMode:NSDefaultRunLoopMode];
     }else{
-        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
+        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
         [[NSRunLoop currentRunLoop] addTimer:timerStart forMode:NSDefaultRunLoopMode];
         isReconnected = NO;
     }
@@ -305,7 +314,7 @@
             NSLog(@"配置列表：%@",workFlowData);
             [workFlowArr addObject:[workFlowData substringWithRange:NSMakeRange(2, 4)]];
             testbigstring = workFlowArr[0];
-            dispatch_time_t partTime = dispatch_time(DISPATCH_TIME_NOW, 1*NSEC_PER_SEC);//这里加延时是因为上一个到这个写入间隔太快，不加会出错
+            dispatch_time_t partTime = dispatch_time(DISPATCH_TIME_NOW, 2*NSEC_PER_SEC);//这里加延时是因为上一个到这个写入间隔太快，不加会出错
             dispatch_after(partTime, dispatch_get_main_queue(), ^{
                 [self requestWorkFlowData];
                 NSLog(@"工作流：%@",workFlowArr);
@@ -678,7 +687,7 @@
     [window addSubview:_deviceTypeChooseTitle];
     
     _xgzDeviceBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0)];
-    [_xgzDeviceBtn setTitle:@"小罐子" forState:UIControlStateNormal];
+    [_xgzDeviceBtn setTitle:@"IAS-5000" forState:UIControlStateNormal];
     _xgzDeviceBtn.layer.cornerRadius = SCREENHEIGHT/30;//圆角的弧度
     _xgzDeviceBtn.layer.borderWidth = 2.0f;
     _xgzDeviceBtn.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
@@ -694,7 +703,7 @@
     
     
     _scsDeviceBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0)];
-    [_scsDeviceBtn setTitle:@"手持式" forState:UIControlStateNormal];
+    [_scsDeviceBtn setTitle:@"IAS-8000" forState:UIControlStateNormal];
     _scsDeviceBtn.layer.cornerRadius = SCREENHEIGHT/30;//圆角的弧度
     _scsDeviceBtn.layer.borderWidth = 2.0f;
     _scsDeviceBtn.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];

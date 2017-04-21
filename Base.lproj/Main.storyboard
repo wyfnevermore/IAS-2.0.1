@@ -60,7 +60,7 @@
                                 <rect key="frame" x="-75" y="366" width="330" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sKl-5J-Xxe" id="bKs-YB-0lJ">
-                                    <rect key="frame" x="0.0" y="0.0" width="330" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="330" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -97,7 +97,7 @@
                                         <rect key="frame" x="0.0" y="22" width="335" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iAR-h9-pQS" id="1hZ-Jq-Td6">
-                                            <rect key="frame" x="0.0" y="0.0" width="335" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="335" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9cr-yl-erX">
@@ -214,7 +214,7 @@
             </objects>
             <point key="canvasLocation" x="1322" y="136"/>
         </scene>
-        <!--Result View Controller-->
+        <!--检测结果-->
         <scene sceneID="fy0-Jl-nje">
             <objects>
                 <viewController id="j48-jD-GQ9" customClass="ResultViewController" sceneMemberID="viewController">
@@ -227,7 +227,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dTN-d5-czR">
-                                <rect key="frame" x="34.666666666666657" y="114" width="355" height="45"/>
+                                <rect key="frame" x="34.666666666666657" y="124" width="355" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="355" id="Few-Z6-AnG"/>
                                     <constraint firstAttribute="height" constant="45" id="HAn-UA-OWV"/>
@@ -236,8 +236,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ziS-15-sfK">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ziS-15-sfK">
+                                <rect key="frame" x="-20" y="242" width="414" height="736"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -247,10 +247,10 @@
                             <constraint firstItem="dTN-d5-czR" firstAttribute="centerX" secondItem="OUA-Vf-zuS" secondAttribute="centerX" constant="5" id="EW3-pN-wH2"/>
                             <constraint firstItem="lzP-Sc-Bo8" firstAttribute="top" secondItem="ziS-15-sfK" secondAttribute="bottom" id="NeD-Ou-lB3"/>
                             <constraint firstAttribute="trailing" secondItem="ziS-15-sfK" secondAttribute="trailing" id="Obf-HW-PWG"/>
-                            <constraint firstItem="dTN-d5-czR" firstAttribute="top" secondItem="znW-Br-TKE" secondAttribute="bottom" constant="50" id="Z0e-ZL-fe7"/>
+                            <constraint firstItem="dTN-d5-czR" firstAttribute="top" secondItem="znW-Br-TKE" secondAttribute="bottom" constant="60" id="Z0e-ZL-fe7"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="sWj-7u-JEl"/>
+                    <navigationItem key="navigationItem" title="检测结果" id="sWj-7u-JEl"/>
                     <connections>
                         <outlet property="type" destination="dTN-d5-czR" id="jeL-Sn-2iv"/>
                     </connections>
