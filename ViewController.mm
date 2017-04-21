@@ -19,6 +19,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _uplabel.frame = CGRectMake(0, SCREENHEIGHT*0.2, SCREENWIDTH, SCREENHEIGHT*0.06);
+    _deviceTableView.frame = CGRectMake(SCREENWIDTH*0.097, SCREENHEIGHT*0.2, SCREENWIDTH*0.857, SCREENHEIGHT*0.56);
+    _typePic.frame = CGRectMake(SCREENWIDTH*0.198, SCREENHEIGHT*0.3, SCREENWIDTH*0.604, SCREENHEIGHT*0.34);
+    _typePickView.frame = CGRectMake(0, SCREENHEIGHT*0.355, SCREENWIDTH, SCREENHEIGHT*0.299);
+    _writeBtn.frame = CGRectMake(SCREENWIDTH*0.169, SCREENHEIGHT*0.817, SCREENWIDTH*0.664, SCREENHEIGHT*0.083);
+    _typelabelleft.frame = CGRectMake(SCREENWIDTH*0.254, SCREENHEIGHT*0.694, SCREENWIDTH*0.4, SCREENHEIGHT*0.041);
+    _done.frame = CGRectMake(SCREENWIDTH*0.8, SCREENHEIGHT*0.599, SCREENWIDTH*0.2, SCREENHEIGHT*0.1);
+    _typeLabel.frame = CGRectMake(SCREENWIDTH*0.519, SCREENHEIGHT*0.681, SCREENWIDTH*0.242, SCREENHEIGHT*0.068);
     
     [self.view bringSubviewToFront:_done];
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:17.0/255 green:55.0/255 blue:108.0/255 alpha:1]];
@@ -76,14 +84,7 @@
     //选择设备型号
     _deviceType = 100;//因为默认为0，所以随便设一个，不然默认就是手持,也用来判断是不是第一次选择
     [self showDeviceType];
-    _uplabel.frame = CGRectMake(0, SCREENHEIGHT*0.2, SCREENWIDTH, SCREENHEIGHT*0.06);
-    _deviceTableView.frame = CGRectMake(SCREENWIDTH*0.097, SCREENHEIGHT*0.2, SCREENWIDTH*0.857, SCREENHEIGHT*0.56);
-    _typePic.frame = CGRectMake(SCREENWIDTH*0.198, SCREENHEIGHT*0.3, SCREENWIDTH*0.604, SCREENHEIGHT*0.34);
-    _typePickView.frame = CGRectMake(0, SCREENHEIGHT*0.355, SCREENWIDTH, SCREENHEIGHT*0.299);
-    _writeBtn.frame = CGRectMake(SCREENWIDTH*0.169, SCREENHEIGHT*0.817, SCREENWIDTH*0.664, SCREENHEIGHT*0.083);
-    _typelabelleft.frame = CGRectMake(SCREENWIDTH*0.254, SCREENHEIGHT*0.694, SCREENWIDTH*0.4, SCREENHEIGHT*0.041);
-    _done.frame = CGRectMake(SCREENWIDTH*0.8, SCREENHEIGHT*0.599, SCREENWIDTH*0.2, SCREENHEIGHT*0.1);
-    _typeLabel.frame = CGRectMake(SCREENWIDTH*0.519, SCREENHEIGHT*0.681, SCREENWIDTH*0.242, SCREENHEIGHT*0.068);
+    
 }
 
 //label点击事件
@@ -147,6 +148,7 @@
             default:
                 _deviceTableView.hidden = NO;
                 [_deviceTableView reloadData];
+                self.title = @"设备列表";
                 NSLog(@"2个及以上设备");
                 break;
         }
@@ -638,6 +640,7 @@
     //NSLog(@"%lu", (unsigned long)rowNo);
     _deviceTableView.hidden = YES;
     _myPeripheral = [_myPeripherals objectAtIndex:rowNo];
+    self.title = @"检测";
     [self connectClick];
 }
 

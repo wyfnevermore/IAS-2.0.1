@@ -67,6 +67,7 @@
     int workFlowPointsType;
     int outsidedatapackageNumber;
     NSString *bluedatastr;
+    NSString *isScanningTitle;
     
 }
 //BLE
