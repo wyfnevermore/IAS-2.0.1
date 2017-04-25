@@ -85,8 +85,8 @@
                                     <action selector="disconnect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6Q4-Qg-ogY"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dah-oC-KQ4">
-                                <rect key="frame" x="-117" y="-239" width="414" height="736"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Dah-oC-KQ4">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="AvG-uE-gQf">
                                 <rect key="frame" x="35" y="559" width="335" height="380"/>
@@ -157,6 +157,7 @@
                         <outlet property="deviceTableView" destination="AvG-uE-gQf" id="TfZ-rs-qWA"/>
                         <outlet property="disconnect" destination="3sR-4j-ygH" id="dWR-fU-ImH"/>
                         <outlet property="done" destination="F1c-8k-nrw" id="zGb-Mh-UHf"/>
+                        <outlet property="lowestView" destination="Dah-oC-KQ4" id="785-d2-fXl"/>
                         <outlet property="typeLabel" destination="2Jj-ma-Cvv" id="4gJ-Tu-QNW"/>
                         <outlet property="typePic" destination="tiI-wN-nDw" id="rXP-dF-com"/>
                         <outlet property="typePickView" destination="H9m-ql-4Nq" id="vei-1o-VAB"/>

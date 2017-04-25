@@ -12,6 +12,7 @@
 #import "Tools.h"
 #import "ResultViewController.h"
 #import "dlpdata.h"
+#import "AboutUI.h"
 
 
 @interface ViewController : UIViewController<CBCentralManagerDelegate, CBPeripheralDelegate,UITableViewDataSource, UITableViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
@@ -90,6 +91,7 @@
 
 //UI相关
 @property (strong, nonatomic)UIView *bgView;//半透明背景
+@property (strong, nonatomic)UIView *ingBgView;//半透明背景
 @property (strong, nonatomic)UIView *alertView;//假设为弹窗
 @property (strong, nonatomic)UIButton *xgzDeviceBtn;//小罐子
 @property (strong, nonatomic)UIButton *scsDeviceBtn;//手持式
@@ -105,6 +107,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *deviceTableView;
 @property (weak, nonatomic) IBOutlet UIImageView *typePic;
 @property (weak, nonatomic) IBOutlet UIButton *disconnect;
+@property (weak, nonatomic) IBOutlet UIImageView *lowestView;
 
 
 - (IBAction)done:(id)sender;

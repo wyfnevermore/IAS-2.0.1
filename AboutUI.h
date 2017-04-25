@@ -12,5 +12,6 @@
 
 - (void)setExtraCellLineHidden: (UITableView *)tableView;
 
++ (void)showIng:(NSString*)title :(UIActivityIndicatorView*)mActivityInView :(UIView*)backView :(UILabel*)ingLabel;
 
 @end

@@ -13,6 +13,7 @@
 
 @interface ViewController ()<WorkFlowChooseDelegate>
 @property (strong,nonatomic)NSMutableArray *workFlowForNow;
+@property (strong,nonatomic)UIActivityIndicatorView* mActivityIndicatorView;
 @end
 
 @implementation ViewController
@@ -29,6 +30,7 @@
     _typeLabel.frame = CGRectMake(SCREENWIDTH*0.519, SCREENHEIGHT*0.681, SCREENWIDTH*0.242, SCREENHEIGHT*0.068);
     
     [self.view bringSubviewToFront:_done];
+    [self.view sendSubviewToBack:_lowestView];
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:17.0/255 green:55.0/255 blue:108.0/255 alpha:1]];
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:22],NSForegroundColorAttributeName:[UIColor whiteColor]}];
     [_writeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -81,10 +83,16 @@
     UITapGestureRecognizer *labelTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
     [_typeLabel addGestureRecognizer:labelTapGestureRecognizer];
     
+    _mActivityIndicatorView = [[UIActivityIndicatorView alloc]init];
+    _bgView = [[UIView alloc]init];
+    _ingBgView = [[UIView alloc]init];
+    _deviceTypeChooseTitle = [[UILabel alloc]init];
+    
+    _lowestView.userInteractionEnabled =YES; //打开用户交互
+    [self tapGestureRecognizer];
     //选择设备型号
     _deviceType = 100;//因为默认为0，所以随便设一个，不然默认就是手持,也用来判断是不是第一次选择
-    [self showDeviceType];
-    
+    [self showDeviceType];//一定放最后
 }
 
 //label点击事件
@@ -94,6 +102,28 @@
     _typePickView.hidden = NO;
     _done.hidden = NO;
     NSLog(@"当前类型：%@",label.text);
+}
+
+-(void)tapGestureRecognizer
+{
+    
+    //创建手势对象
+    UITapGestureRecognizer *tap =[[UITapGestureRecognizer alloc]initWithTarget:self     action:@selector(tapAction:)];
+    //配置属性
+    //轻拍次数
+    tap.numberOfTapsRequired =1;
+    //轻拍手指个数
+    tap.numberOfTouchesRequired =1;
+    //讲手势添加到指定的视图上
+    [_lowestView addGestureRecognizer:tap];
+    
+}
+
+-(void)tapAction:(UITapGestureRecognizer *)tap
+{
+    //图片切换
+    NSLog(@"拍一下");
+    _deviceTableView.hidden = YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -182,6 +212,8 @@
     [self.myCentralManager connectPeripheral:_myPeripheral options:nil];
     [_uplabel setText:@"正在连接设备..."];
     [_uplabel setTextColor:[UIColor blackColor]];
+    isScanningTitle = @"正在连接设备...";
+    [AboutUI showIng:isScanningTitle :_mActivityIndicatorView :_ingBgView :_deviceTypeChooseTitle];
 }
 
 //连接外设成功
@@ -415,6 +447,7 @@
                             NSLog(@"%d",isGetDataCB);
                             isCbInited = true;
                             formerType = projectIDStr;
+                            [self stoping];
                             [_writeBtn setTitle:@"采集样品" forState:UIControlStateNormal];
                             _writeBtn.userInteractionEnabled = YES;
                             break;
@@ -422,6 +455,7 @@
                         case 1:{
                             bool isGetDataYP = getDLPData(returnData,waveLength, intentsities,workFlowPointsType);
                             NSLog(@"%d",isGetDataYP);
+                            [self stoping];
                             [_uplabel setText:@"采集样品完成！"];
                             _writeBtn.userInteractionEnabled = YES;
                             dataString = [self getAbs:cb intentsities:intentsities];
@@ -530,6 +564,7 @@
 //掉线时调用
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
     NSLog(@"periheral has disconnect");
+    [self stoping];
     [_uplabel setText:@"连接断开！"];
     [_uplabel setTextColor:[UIColor redColor]];
     [_writeBtn setTitle:@"搜索设备" forState:UIControlStateNormal];
@@ -537,7 +572,7 @@
     [workFlowName removeAllObjects];
     [workFlowDetail removeAllObjects];
     [outsideArr removeAllObjects];
-    _writeBtn.userInteractionEnabled =YES;
+    _writeBtn.userInteractionEnabled = YES;
     _deviceType = 100;
     [self showDeviceType];
     receStr = 0;
@@ -664,10 +699,10 @@
     [self writeToPeripheral:@"00" :_ladengCharacteristic];
     [self writeToPeripheral:@"00" :_duojiCharacteristic];
     [self chooseCurrentProject];
-    
-    [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
     [_uplabel setText:@"设备已连接，请采集参比！"];
     [_uplabel setTextColor:[UIColor blackColor]];
+    [self stoping];
+    [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
 }
 
 //UI 选择设备型号
@@ -675,14 +710,13 @@
     //1. 取出window
     UIWindow * window = [[UIApplication sharedApplication] keyWindow];
     //2. 创建背景视图
-    _bgView = [[UIView alloc]init];
     _bgView.frame = window.bounds;
     //3. 背景颜色可以用多种方法
     //_bgView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.4];
     _bgView.backgroundColor = [UIColor colorWithWhite:0.1 alpha:1.0];
     [window addSubview:_bgView];
     //4. 把需要展示的控件添加上去
-    _deviceTypeChooseTitle = [[UILabel alloc]initWithFrame:CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0)];
+    _deviceTypeChooseTitle.frame = CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0);
     [_deviceTypeChooseTitle setText:@"请选择设备型号"];
     _deviceTypeChooseTitle.textAlignment = NSTextAlignmentCenter;//文字居中
     _deviceTypeChooseTitle.textColor = [UIColor whiteColor];
@@ -810,10 +844,15 @@
             _writeBtn.userInteractionEnabled = NO;
             statement = 0;
             [_uplabel setText:@"正在采集参比..."];
+            isScanningTitle = @"正在采集参比...";
+            [AboutUI showIng:isScanningTitle :_mActivityIndicatorView :_ingBgView :_deviceTypeChooseTitle];
         }else {
             _writeBtn.userInteractionEnabled = NO;
             statement = 1;
             [_uplabel setText:@"正在采集样品..."];
+            isScanningTitle = @"正在采集样品...";
+            [AboutUI showIng:isScanningTitle :_mActivityIndicatorView :_ingBgView :_deviceTypeChooseTitle];
+
         }
         NSString* value = @"00";
         [self writeToPeripheral:value :_startscanCharacteristic];
@@ -856,6 +895,13 @@
     }else{
         isdanliang = NO;
     }
+}
+
+-(void)stoping{
+    [_mActivityIndicatorView stopAnimating]; // 结束旋转
+    [_mActivityIndicatorView setHidesWhenStopped:YES]; //当旋转结束时隐藏
+    _ingBgView.frame = CGRectMake(0, 0, 0, 0);
+    _deviceTypeChooseTitle.frame = CGRectMake(SCREENWIDTH*0.25, SCREENHEIGHT*0.7, 0, 0);
 }
 
 
