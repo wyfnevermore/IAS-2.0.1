@@ -13,7 +13,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *type;
 
 
-@property (strong, nonatomic)NSString* name;
+@property (strong, nonatomic)NSMutableString* name;
 @property (strong, nonatomic)NSString* pic;
 @property (strong, nonatomic)NSMutableArray* dataXGDArray;
 @property (strong, nonatomic)NSMutableArray* dataBCArray;

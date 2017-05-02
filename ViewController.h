@@ -17,7 +17,6 @@
 
 @interface ViewController : UIViewController<CBCentralManagerDelegate, CBPeripheralDelegate,UITableViewDataSource, UITableViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 {
-    
     uScanConfig scanConfigWorkFlow;//用来接收设备中的工作流
     uScanConfig changedScanConfigWorkFlow;
     WorkFlowExt outsideWorkFlow;
@@ -51,7 +50,6 @@
     NSString *workFlowData;
     NSString *testbigstring;
     NSString *testduojiladeng;
-    NSString *segueToResult;
     NSString *picToResult;
     NSString *formerType;
     NSInteger receStr;
@@ -88,6 +86,7 @@
 @property (strong, nonatomic) CBCharacteristic* duojiCharacteristic;
 @property (strong, nonatomic) CBCharacteristic* outsidesettingCharacteristic;
 @property (strong, nonatomic) CBCharacteristic* workFlowForNowCharacteristic;
+@property (strong, nonatomic) NSMutableString *showResultNow;
 
 //UI相关
 @property (strong, nonatomic)UIView *bgView;//半透明背景
@@ -119,7 +118,5 @@
 - (IBAction)chooseDevice:(id)sender;
 
 
-
--(void) getworkflow;
 @end
 

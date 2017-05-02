@@ -27,6 +27,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _type.frame = CGRectMake(screenWidth*0.0845, screenHeight*0.12, screenWidth*0.8575, screenHeight*0.08*4);
+    if ([_name containsString:@"奶粉"] || [_name containsString:@"能量"]){
+        _type.textAlignment = NSTextAlignmentLeft;
+    }else{
+        _type.textAlignment = NSTextAlignmentCenter;
+    }
     [_type setText:_name];
     NSLog(@"结果页数据：%@",_name);
     self.title = @"检测结果";
@@ -42,7 +48,7 @@
 //折线图
 - (LineChartView *)lineView {
     if (!_lineView) {
-        _lineView = [[LineChartView alloc] initWithFrame:CGRectMake(0, 220, screenWidth, screenHeight-300)];
+        _lineView = [[LineChartView alloc] initWithFrame:CGRectMake(0, screenHeight*0.43, screenWidth*0.98, screenHeight*0.55)];
         _lineView.delegate = self;//设置代理
         _lineView.backgroundColor =  [UIColor whiteColor];
         _lineView.noDataText = @"暂无数据";

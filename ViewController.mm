@@ -20,14 +20,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _uplabel.frame = CGRectMake(0, SCREENHEIGHT*0.2, SCREENWIDTH, SCREENHEIGHT*0.06);
-    _deviceTableView.frame = CGRectMake(SCREENWIDTH*0.097, SCREENHEIGHT*0.2, SCREENWIDTH*0.857, SCREENHEIGHT*0.56);
+    _uplabel.frame = CGRectMake(SCREENWIDTH*0.01, SCREENHEIGHT*0.2, SCREENWIDTH, SCREENHEIGHT*0.06);
+    _uplabel.textAlignment = NSTextAlignmentCenter;
+    _deviceTableView.frame = CGRectMake(SCREENWIDTH*0.097, SCREENHEIGHT*0.2, SCREENWIDTH*0.857, SCREENHEIGHT*0.58);
     _typePic.frame = CGRectMake(SCREENWIDTH*0.198, SCREENHEIGHT*0.3, SCREENWIDTH*0.604, SCREENHEIGHT*0.34);
     _typePickView.frame = CGRectMake(0, SCREENHEIGHT*0.355, SCREENWIDTH, SCREENHEIGHT*0.299);
     _writeBtn.frame = CGRectMake(SCREENWIDTH*0.169, SCREENHEIGHT*0.817, SCREENWIDTH*0.664, SCREENHEIGHT*0.083);
-    _typelabelleft.frame = CGRectMake(SCREENWIDTH*0.254, SCREENHEIGHT*0.694, SCREENWIDTH*0.4, SCREENHEIGHT*0.041);
+    _typelabelleft.frame = CGRectMake(SCREENWIDTH*0.2, SCREENHEIGHT*0.705, SCREENWIDTH*0.4, SCREENHEIGHT*0.041);
     _done.frame = CGRectMake(SCREENWIDTH*0.8, SCREENHEIGHT*0.599, SCREENWIDTH*0.2, SCREENHEIGHT*0.1);
-    _typeLabel.frame = CGRectMake(SCREENWIDTH*0.519, SCREENHEIGHT*0.681, SCREENWIDTH*0.242, SCREENHEIGHT*0.068);
+    _typeLabel.frame = CGRectMake(SCREENWIDTH*0.46, SCREENHEIGHT*0.681, SCREENWIDTH*0.35, SCREENHEIGHT*0.082);
     
     [self.view bringSubviewToFront:_done];
     [self.view sendSubviewToBack:_lowestView];
@@ -46,9 +47,8 @@
     _disconnect.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
     
     _typeLabel.layer.borderWidth = 4.0f;
-    _typeLabel.layer.cornerRadius = SCREENHEIGHT*0.034;
+    _typeLabel.layer.cornerRadius = SCREENHEIGHT*0.041;
     _typeLabel.layer.borderColor = [[UIColor redColor]CGColor];
-    //_typeLabel.backgroundColor = [UIColor grayColor];
     [_uplabel setText:@"请打开蓝牙"];
     workFlowPoints = 801;
     workFlowPointsType = 2;//2即为把420点差分成801
@@ -66,7 +66,7 @@
     _typePickView.backgroundColor  = [UIColor clearColor];
     _typePickView.delegate = self;
     _typePickView.dataSource = self;
-    pickArray = [[NSArray alloc] initWithObjects:@"片剂",@"胶囊",nil];
+    pickArray = [[NSArray alloc] initWithObjects:@"片剂",@"胶囊",@"乳胶",@"面粉",@"珍珠粉",@"爽身粉",@"保鲜膜",@"爬行垫",@"奶嘴",@"奶粉",@"饼干",@"减肥药",@"玛卡",@"纸尿裤",nil];
     _typeLabel.userInteractionEnabled = YES;
     projectIDStr = @"581";
     formerType = @"562";
@@ -84,7 +84,6 @@
     [_typeLabel addGestureRecognizer:labelTapGestureRecognizer];
     
     _mActivityIndicatorView = [[UIActivityIndicatorView alloc]init];
-    _bgView = [[UIView alloc]init];
     _ingBgView = [[UIView alloc]init];
     _deviceTypeChooseTitle = [[UILabel alloc]init];
     
@@ -121,8 +120,8 @@
 
 -(void)tapAction:(UITapGestureRecognizer *)tap
 {
-    //图片切换
-    NSLog(@"拍一下");
+    //点击视图
+    NSLog(@"点击主屏幕");
     _deviceTableView.hidden = YES;
 }
 
@@ -141,7 +140,7 @@
             break;
         default:
             //通知框
-            NSString *title = @"请打开蓝牙！";
+            NSString *title = @"请打开蓝牙!";
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleAlert];
             //UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
             UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
@@ -353,7 +352,6 @@
                 [self requestWorkFlowData];
                 NSLog(@"工作流：%@",workFlowArr);
             });
-            
         }
     }
     //获取工作流配置参数
@@ -459,8 +457,63 @@
                             [_uplabel setText:@"采集样品完成！"];
                             _writeBtn.userInteractionEnabled = YES;
                             dataString = [self getAbs:cb intentsities:intentsities];
-                            segueToResult = [Tools getRestData:projectIDStr :dataString];
-                            [_uplabel setText:segueToResult];
+                            if ([projectIDStr intValue] == 552) {
+                                NSString *titleStr = [Tools getRestData:projectIDStr :dataString];
+                                projectIDStr = @"626";
+                                NSString* danbaiStr = [Tools getRestData:projectIDStr :dataString];
+                                danbaiStr = [danbaiStr substringToIndex:danbaiStr.length-1];
+                                danbaiStr = [danbaiStr stringByAppendingString:@"g"];
+                                projectIDStr = @"632";
+                                NSString* tanshuiStr = [Tools getRestData:projectIDStr :dataString];
+                                tanshuiStr = [tanshuiStr substringToIndex:tanshuiStr.length-1];
+                                tanshuiStr = [tanshuiStr stringByAppendingString:@"g"];
+                                projectIDStr = @"631";
+                                NSString* zhifangStr = [Tools getRestData:projectIDStr :dataString];
+                                zhifangStr = [zhifangStr substringToIndex:zhifangStr.length-1];
+                                zhifangStr = [zhifangStr stringByAppendingString:@"g"];
+                                if ([titleStr containsString:@"三聚氰胺"]) {
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"        %@\n",titleStr]];
+                                }else{
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"                  %@\n",titleStr]];
+                                }
+                                /*
+                                [_showResultNow appendString:[NSString stringWithFormat:@"每100g含：\n"]];
+                                [_showResultNow appendString:[NSString stringWithFormat:@"           %@\n",danbaiStr]];
+                                [_showResultNow appendString:[NSString stringWithFormat:@"   %@\n",tanshuiStr]];
+                                [_showResultNow appendString:[NSString stringWithFormat:@"               %@",zhifangStr]];
+                                NSLog(@"结果：%@",_showResultNow);
+                                 */
+                                projectIDStr = @"552";
+                            }else if ([projectIDStr intValue] == 641){
+                                NSString* danbaiStr = [Tools getRestData:projectIDStr :dataString];
+                                danbaiStr = [danbaiStr substringToIndex:danbaiStr.length-1];
+                                danbaiStr = [danbaiStr stringByAppendingString:@"g"];
+                                projectIDStr = @"642";
+                                NSString* zhifangStr = [Tools getRestData:projectIDStr :dataString];
+                                zhifangStr = [zhifangStr substringToIndex:zhifangStr.length-1];
+                                zhifangStr = [zhifangStr stringByAppendingString:@"g"];
+                                projectIDStr = @"643";
+                                NSString* tanshuiStr = [Tools getRestData:projectIDStr :dataString];
+                                tanshuiStr = [tanshuiStr substringToIndex:tanshuiStr.length-1];
+                                tanshuiStr = [tanshuiStr stringByAppendingString:@"g"];
+                                projectIDStr = @"644";
+                                NSString* nengliangStr = [Tools getRestData:projectIDStr :dataString];
+                                nengliangStr = [nengliangStr substringToIndex:nengliangStr.length-1];
+                                nengliangStr = [nengliangStr stringByAppendingString:@"KJ"];
+                                
+                                [_showResultNow appendString:[NSString stringWithFormat:@"每100g含：\n"]];
+                                [_showResultNow appendString:[NSString stringWithFormat:@"          %@\n",danbaiStr]];
+                                [_showResultNow appendString:[NSString stringWithFormat:@"              %@\n",zhifangStr]];
+                                [_showResultNow appendString:[NSString stringWithFormat:@"  %@\n",tanshuiStr]];
+                                [_showResultNow appendString:[NSString stringWithFormat:@"              %@",nengliangStr]];
+                                NSLog(@"结果：%@",_showResultNow);
+                                projectIDStr = @"641";
+                            }
+                            else{
+                               NSString* Result = [Tools getRestData:projectIDStr :dataString];
+                               [_showResultNow appendString:[NSString stringWithFormat:@"%@",Result]];
+                            }
+                            [_uplabel setText:@"样品采集完成！"];
                             [self performSegueWithIdentifier:@"result" sender:self];
                             break;
                         }
@@ -521,7 +574,9 @@
     //结果页
     if ([segue.identifier isEqualToString:@"result"]) {
         ResultViewController* rece = segue.destinationViewController;
-        rece.name = segueToResult;
+        rece.name = nil;
+        rece.name = [NSMutableString stringWithString:@""];
+        rece.name = _showResultNow;
         rece.dataXGDArray = _transXGD;
         _transBC = [[NSMutableArray alloc]initWithCapacity:workFlowPoints];
         for (int i = 0; i < workFlowPoints; i++) {
@@ -555,7 +610,6 @@
             //workFlowPoints = [[workFlowDetail[receStr] substringWithRange:NSMakeRange (3,3)]intValue];
             NSLog(@"点数：%d",workFlowPoints);
             [Tools activeWorkFlow:testbigstring :_myPeripheral :_activeConfigurationCharacteristic];
-            //isdanliang = [Tools activeOutside:outsideArr :receStr :_myPeripheral :_duojiCharacteristic :_ladengCharacteristic];
             [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
         }
     }
@@ -574,6 +628,7 @@
     [outsideArr removeAllObjects];
     _writeBtn.userInteractionEnabled = YES;
     _deviceType = 100;
+    NSLog(@"%ld断线后的设备类型",(long)_deviceType);
     [self showDeviceType];
     receStr = 0;
     isdanliang = NO;
@@ -710,6 +765,7 @@
     //1. 取出window
     UIWindow * window = [[UIApplication sharedApplication] keyWindow];
     //2. 创建背景视图
+    _bgView = [[UIView alloc]init];
     _bgView.frame = window.bounds;
     //3. 背景颜色可以用多种方法
     //_bgView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.4];
@@ -760,6 +816,7 @@
         _xgzDeviceBtn.frame = CGRectMake(SCREENWIDTH/8, SCREENHEIGHT*0.43, SCREENWIDTH*3/4, SCREENHEIGHT/15);
         _scsDeviceBtn.frame = CGRectMake(SCREENWIDTH/8, SCREENHEIGHT*0.55, SCREENWIDTH*3/4, SCREENHEIGHT/15);
     }];
+    
     if (_deviceType != 100) {
         //6.给背景添加一个手势，后续方便移除视图
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideAlertView)];
@@ -769,12 +826,24 @@
 }
 
 - (void)hideAlertView{
+    if (_deviceType == 0) {
+        pickArray = [[NSArray alloc]initWithObjects:@"片剂",@"胶囊",@"乳胶",@"面粉",@"珍珠粉",@"爽身粉",@"保鲜膜",@"爬行垫",@"奶嘴",@"奶粉",@"饼干",@"减肥药",@"玛卡",@"纸尿裤",@"辣椒粉",@"木材", nil];
+        [_typePickView reloadAllComponents];
+        [_typePic setImage:[UIImage imageNamed:@"yaopian"]];
+        [_typeLabel setText:@"片剂"];
+    }else if (_deviceType == 1){
+        pickArray = [[NSArray alloc]initWithObjects:@"片剂",@"茶叶",@"枸杞", nil];
+        [_typePickView reloadAllComponents];
+        [_typePic setImage:[UIImage imageNamed:@"yaopian"]];
+        [_typeLabel setText:@"片剂"];
+    }
     //7.隐去动画简单
     [UIView animateWithDuration:0.3 animations:^{
         _deviceTypeChooseTitle.frame = CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0);
         _xgzDeviceBtn.frame = CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0);
         _scsDeviceBtn.frame = CGRectMake(SCREENWIDTH/2, SCREENHEIGHT/2, 0, 0);
     }];
+
     // 延迟几秒移除视图
     [self performSelector:@selector(remove) withObject:nil afterDelay:0.3];
     [self chooseCurrentProject];
@@ -791,6 +860,7 @@
     _scsDeviceBtn.backgroundColor = [UIColor whiteColor];
     _deviceType = 1;
     NSLog(@"%ld，手持式",(long)_deviceType);
+    
 
     //6.给背景添加一个手势，后续方便移除视图
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideAlertView)];
@@ -819,7 +889,9 @@
         _workFlowForNow = [Tools getModelRestDataEverytime:projectIDStr :changedScanConfigWorkFlow :_deviceType];
         NSLog(@"得到的云端蓝牙工作流数据块：%@",_workFlowForNow);
         [self sendWorkFlowToBle];//发送给蓝牙，设定当前工作流
-        [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
+        if ([typeStr containsString:@"片剂"] || [typeStr containsString:@"胶囊"]) {
+            [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
+        }
     }
 }
 
@@ -836,6 +908,7 @@
         packageNo = 1;
         returnByteNo = 0;
         init = 1;
+        
         [self writeToPeripheral:@"01" :_duojiCharacteristic];
         if (isdanliang == YES) {
             [self writeToPeripheral:@"01" :_ladengCharacteristic];
@@ -849,6 +922,8 @@
         }else {
             _writeBtn.userInteractionEnabled = NO;
             statement = 1;
+            _showResultNow = nil;
+            _showResultNow = [NSMutableString stringWithString:@""];
             [_uplabel setText:@"正在采集样品..."];
             isScanningTitle = @"正在采集样品...";
             [AboutUI showIng:isScanningTitle :_mActivityIndicatorView :_ingBgView :_deviceTypeChooseTitle];

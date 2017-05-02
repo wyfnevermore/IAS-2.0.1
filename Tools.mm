@@ -14,17 +14,83 @@
 + (NSString*)setModelType:(NSString*)typeStr : (UIImageView*)typeImg :(NSInteger)deviceType{
     NSString *ProjectID;
     if (deviceType == 0) {
-        if ([typeStr containsString:@"片"]) {
+        if ([typeStr containsString:@"片剂"]) {
             [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
             ProjectID = @"581";
         }
-        if ([typeStr containsString:@"胶"]) {
+        if ([typeStr containsString:@"胶囊"]) {
             [typeImg setImage:[UIImage imageNamed:@"jiaonang"]];
             ProjectID = @"616";
         }
+        if ([typeStr containsString:@"乳胶"]) {
+            [typeImg setImage:[UIImage imageNamed:@"rujiao"]];
+            ProjectID = @"554";
+        }
+        if ([typeStr containsString:@"面粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"mianfen"]];
+            ProjectID = @"590";
+        }
+        if ([typeStr containsString:@"珍珠粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"zhenzhufen"]];
+            ProjectID = @"553";
+        }
+        if ([typeStr containsString:@"爽身粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"shuangshenfen"]];
+            ProjectID = @"585";
+        }
+        if ([typeStr containsString:@"保鲜膜"]) {
+            [typeImg setImage:[UIImage imageNamed:@"baoxianmo"]];
+            ProjectID = @"685";
+        }
+        if ([typeStr containsString:@"爬行垫"]) {
+            [typeImg setImage:[UIImage imageNamed:@"papadian"]];
+            ProjectID = @"601";
+        }
+        if ([typeStr containsString:@"奶嘴"]) {
+            [typeImg setImage:[UIImage imageNamed:@"naizui"]];
+            ProjectID = @"681";
+        }
+        if ([typeStr containsString:@"奶粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"naifen"]];
+            ProjectID = @"552";
+        }
+        if ([typeStr containsString:@"饼干"]) {
+            [typeImg setImage:[UIImage imageNamed:@"binggan"]];
+            ProjectID = @"641";
+        }
+        if ([typeStr containsString:@"减肥药"]) {
+            [typeImg setImage:[UIImage imageNamed:@"zuoxuanroujian"]];
+            ProjectID = @"557";
+        }
+        if ([typeStr containsString:@"玛卡"]) {
+            [typeImg setImage:[UIImage imageNamed:@"maka"]];
+            ProjectID = @"684";
+        }
+        if ([typeStr containsString:@"纸尿裤"]) {
+            [typeImg setImage:[UIImage imageNamed:@"zhiniaoku"]];
+            ProjectID = @"606";
+        }
+        if ([typeStr containsString:@"辣椒粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"lajiaofen"]];
+            ProjectID = @"650";
+        }
+        if ([typeStr containsString:@"木材"]) {
+            [typeImg setImage:[UIImage imageNamed:@"mucai"]];
+            ProjectID = @"665";
+        }
     }else if (deviceType == 1){
-        [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
-        ProjectID = @"581";
+        if ([typeStr containsString:@"片剂"]) {
+            [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
+            ProjectID = @"581";
+        }
+        if ([typeStr containsString:@"茶叶"]) {
+            [typeImg setImage:[UIImage imageNamed:@"chaye"]];
+            ProjectID = @"651";
+        }
+        if ([typeStr containsString:@"枸杞"]) {
+            [typeImg setImage:[UIImage imageNamed:@"gouqi"]];
+            ProjectID = @"658";
+        }
     }
     return ProjectID;
 }
@@ -70,38 +136,6 @@
     NSLog(@"%@",workFlowObject);
 }
 
-//激活外部工作流
-+(BOOL)activeOutside:(NSMutableArray*)outsideArray : (NSInteger)number :(CBPeripheral*)mPeripheral : (CBCharacteristic*)dianjicharacteristic :(CBCharacteristic*)ladengcharacteristic{
-    NSString* liquidorsolid;
-    NSString* outsidelight;
-    NSString* dianji;
-    NSData* liquidorsolidData;
-    NSData* outsidelightData;
-    NSData* dianjiData;
-    if (outsideArray.count == 0) {
-        NSLog(@"未受到外置数据");
-        return NO;
-    }else{
-        liquidorsolid = [outsideArray[number] substringWithRange:NSMakeRange(2, 2)];
-        outsidelight = [outsideArray[number] substringWithRange:NSMakeRange(4, 2)];
-        dianji = [outsideArray[number] substringWithRange:NSMakeRange(6, 2)];
-        liquidorsolidData = [Tools dataWithHexstring:liquidorsolid];
-        outsidelightData = [Tools dataWithHexstring:outsidelight];
-        dianjiData = [Tools dataWithHexstring:dianji];
-        //外置灯
-        if ([outsidelight intValue] == 1) {
-            [mPeripheral writeValue:outsidelightData forCharacteristic:ladengcharacteristic type:CBCharacteristicWriteWithResponse];
-            return NO;
-        }else if ([outsidelight intValue] == 2){
-            NSString* obj = @"00";
-            [mPeripheral writeValue:[Tools dataWithHexstring:obj] forCharacteristic:ladengcharacteristic type:CBCharacteristicWriteWithResponse];
-            return YES;
-        }else{
-            [mPeripheral writeValue:outsidelightData forCharacteristic:ladengcharacteristic type:CBCharacteristicWriteWithResponse];
-            return NO;
-        }
-    }
-}
 
 + (NSString*)getRestData:(NSString*)projectIDstr : (NSString*)datastr{
     NSString* segueToResult;
@@ -126,7 +160,7 @@
     NSString *receData = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
     NSLog(@"%@",receData);
     if ([receData containsString:@"异常"]) {
-        segueToResult = @"数据异常";
+        segueToResult = @"执行异常";
     }else{
         NSArray *arrys1= [receData componentsSeparatedByString:@"\""];
         NSString* str1=(NSString *)arrys1[3];
@@ -135,6 +169,8 @@
     }
     return segueToResult;
 }
+
+
 
 //从模型中获取工作流
 + (void)getModelRestData:(NSString*)projectIDstr{
