@@ -39,7 +39,7 @@
     [window addSubview:ingLabel];
     
     //mActivityInView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    mActivityInView.center = CGPointMake(SCREENWIDTH*0.5f, SCREENWIDTH*0.84f);//只能设置中心，不能设置大小
+    mActivityInView.center = CGPointMake(SCREENWIDTH*0.5f, SCREENHEIGHT*0.45f);//只能设置中心，不能设置大小
     mActivityInView.color = [UIColor whiteColor]; // 改变圈圈的颜色
     CGAffineTransform transformInit = CGAffineTransformMakeScale(0.1f, 0.1f);
     mActivityInView.transform = transformInit;

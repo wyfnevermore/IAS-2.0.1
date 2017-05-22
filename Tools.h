@@ -21,10 +21,14 @@
 
 +(void)activeWorkFlow:(NSString*)workFlowStr :(CBPeripheral*)mPeripheral : (CBCharacteristic*)characteristic;
 
-+ (NSString*)getRestData : (NSString*)projectIDstr : (NSString*)datastr;
++ (NSString*)getRestData : (NSString*)projectIDstr : (NSString*)datastr;//请求检测结果
 
-+ (void)getModelRestData:(NSString*)projectIDstr;
++ (void)getHttp;
 
 + (NSMutableArray*)getModelRestDataEverytime:(NSString*)projectIDstr :(uScanConfig)changedWorkFlow :(NSInteger)devicetype;
+
++ (BOOL)isCbDataCurrent: (double*)cb : (int)workFlowPoints;
+
++ (BOOL)isIntentDataCurrent: (double*)intent : (int)workFlowPoints;
 
 @end

@@ -49,7 +49,6 @@
     NSString *workFlowCountData;
     NSString *workFlowData;
     NSString *testbigstring;
-    NSString *testduojiladeng;
     NSString *picToResult;
     NSString *formerType;
     NSInteger receStr;
@@ -67,7 +66,7 @@
     int outsidedatapackageNumber;
     NSString *bluedatastr;
     NSString *isScanningTitle;
-    
+    double dataMax;
 }
 //BLE
 @property (strong, nonatomic) CBCentralManager* myCentralManager;
@@ -87,6 +86,7 @@
 @property (strong, nonatomic) CBCharacteristic* outsidesettingCharacteristic;
 @property (strong, nonatomic) CBCharacteristic* workFlowForNowCharacteristic;
 @property (strong, nonatomic) NSMutableString *showResultNow;
+@property (strong, nonatomic) NSMutableArray* isCurrentDataArray;
 
 //UI相关
 @property (strong, nonatomic)UIView *bgView;//半透明背景
@@ -94,6 +94,7 @@
 @property (strong, nonatomic)UIView *alertView;//假设为弹窗
 @property (strong, nonatomic)UIButton *xgzDeviceBtn;//小罐子
 @property (strong, nonatomic)UIButton *scsDeviceBtn;//手持式
+@property (strong, nonatomic)UIButton *okBtn;
 @property (strong, nonatomic)UILabel *deviceTypeChooseTitle;//@"请选择设备型号"
 @property (assign, nonatomic)NSInteger deviceType;
 
@@ -107,16 +108,19 @@
 @property (weak, nonatomic) IBOutlet UIImageView *typePic;
 @property (weak, nonatomic) IBOutlet UIButton *disconnect;
 @property (weak, nonatomic) IBOutlet UIImageView *lowestView;
+@property (weak, nonatomic) IBOutlet UIButton *canbi;
 
 
 - (IBAction)done:(id)sender;
 - (IBAction)writeBtn:(id)sender;
 
+- (IBAction)moniduankai:(id)sender;
 
 
 - (IBAction)disconnect:(id)sender;
-- (IBAction)chooseDevice:(id)sender;
 
+
+- (IBAction)canbi:(id)sender;
 
 @end
 

@@ -27,7 +27,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _type.frame = CGRectMake(screenWidth*0.0845, screenHeight*0.12, screenWidth*0.8575, screenHeight*0.08*4);
+    _type.frame = CGRectMake(screenWidth*0.0845, screenHeight*0.12, screenWidth*0.9, screenHeight*0.08*4);
     if ([_name containsString:@"奶粉"] || [_name containsString:@"能量"]){
         _type.textAlignment = NSTextAlignmentLeft;
     }else{

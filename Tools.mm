@@ -7,93 +7,9 @@
 //
 
 #import "Tools.h"
+#import "ViewController.h"
 
 @implementation Tools
-
-//切换类型
-+ (NSString*)setModelType:(NSString*)typeStr : (UIImageView*)typeImg :(NSInteger)deviceType{
-    NSString *ProjectID;
-    if (deviceType == 0) {
-        if ([typeStr containsString:@"片剂"]) {
-            [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
-            ProjectID = @"581";
-        }
-        if ([typeStr containsString:@"胶囊"]) {
-            [typeImg setImage:[UIImage imageNamed:@"jiaonang"]];
-            ProjectID = @"616";
-        }
-        if ([typeStr containsString:@"乳胶"]) {
-            [typeImg setImage:[UIImage imageNamed:@"rujiao"]];
-            ProjectID = @"554";
-        }
-        if ([typeStr containsString:@"面粉"]) {
-            [typeImg setImage:[UIImage imageNamed:@"mianfen"]];
-            ProjectID = @"590";
-        }
-        if ([typeStr containsString:@"珍珠粉"]) {
-            [typeImg setImage:[UIImage imageNamed:@"zhenzhufen"]];
-            ProjectID = @"553";
-        }
-        if ([typeStr containsString:@"爽身粉"]) {
-            [typeImg setImage:[UIImage imageNamed:@"shuangshenfen"]];
-            ProjectID = @"585";
-        }
-        if ([typeStr containsString:@"保鲜膜"]) {
-            [typeImg setImage:[UIImage imageNamed:@"baoxianmo"]];
-            ProjectID = @"685";
-        }
-        if ([typeStr containsString:@"爬行垫"]) {
-            [typeImg setImage:[UIImage imageNamed:@"papadian"]];
-            ProjectID = @"601";
-        }
-        if ([typeStr containsString:@"奶嘴"]) {
-            [typeImg setImage:[UIImage imageNamed:@"naizui"]];
-            ProjectID = @"681";
-        }
-        if ([typeStr containsString:@"奶粉"]) {
-            [typeImg setImage:[UIImage imageNamed:@"naifen"]];
-            ProjectID = @"552";
-        }
-        if ([typeStr containsString:@"饼干"]) {
-            [typeImg setImage:[UIImage imageNamed:@"binggan"]];
-            ProjectID = @"641";
-        }
-        if ([typeStr containsString:@"减肥药"]) {
-            [typeImg setImage:[UIImage imageNamed:@"zuoxuanroujian"]];
-            ProjectID = @"557";
-        }
-        if ([typeStr containsString:@"玛卡"]) {
-            [typeImg setImage:[UIImage imageNamed:@"maka"]];
-            ProjectID = @"684";
-        }
-        if ([typeStr containsString:@"纸尿裤"]) {
-            [typeImg setImage:[UIImage imageNamed:@"zhiniaoku"]];
-            ProjectID = @"606";
-        }
-        if ([typeStr containsString:@"辣椒粉"]) {
-            [typeImg setImage:[UIImage imageNamed:@"lajiaofen"]];
-            ProjectID = @"650";
-        }
-        if ([typeStr containsString:@"木材"]) {
-            [typeImg setImage:[UIImage imageNamed:@"mucai"]];
-            ProjectID = @"665";
-        }
-    }else if (deviceType == 1){
-        if ([typeStr containsString:@"片剂"]) {
-            [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
-            ProjectID = @"581";
-        }
-        if ([typeStr containsString:@"茶叶"]) {
-            [typeImg setImage:[UIImage imageNamed:@"chaye"]];
-            ProjectID = @"651";
-        }
-        if ([typeStr containsString:@"枸杞"]) {
-            [typeImg setImage:[UIImage imageNamed:@"gouqi"]];
-            ProjectID = @"658";
-        }
-    }
-    return ProjectID;
-}
 
 //将传入的NSData类型转换成NSString并返回
 + (NSString*)hexadecimalString:(NSData *)data{
@@ -125,6 +41,118 @@
     }
     return data;
 }
+
+
+//切换类型
++ (NSString*)setModelType:(NSString*)typeStr : (UIImageView*)typeImg :(NSInteger)deviceType{
+    NSString *ProjectID;
+    if (deviceType == 0) {
+        if ([typeStr containsString:@"片剂"]) {
+            [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
+            ProjectID = @"691";
+        }
+        if ([typeStr containsString:@"胶囊"]) {
+            [typeImg setImage:[UIImage imageNamed:@"jiaonang"]];
+            ProjectID = @"616";
+        }
+        if ([typeStr containsString:@"乳胶"]) {
+            [typeImg setImage:[UIImage imageNamed:@"rujiao"]];
+            ProjectID = @"554";
+        }
+        if ([typeStr containsString:@"面粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"mianfen"]];
+            ProjectID = @"590";
+        }
+        if ([typeStr containsString:@"珍珠粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"zhenzhufen"]];
+            ProjectID = @"553";
+        }
+        if ([typeStr containsString:@"爽身粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"shuangshenfen"]];
+            ProjectID = @"585";
+        }
+        if ([typeStr containsString:@"保鲜膜"]) {
+            [typeImg setImage:[UIImage imageNamed:@"baoxianmo"]];
+            ProjectID = @"685";
+        }
+        if ([typeStr containsString:@"爬行垫"]) {
+            [typeImg setImage:[UIImage imageNamed:@"papadian"]];
+            ProjectID = @"601";
+        }
+        if ([typeStr containsString:@"奶嘴"]) {
+            [typeImg setImage:[UIImage imageNamed:@"naizui"]];
+            ProjectID = @"720";
+        }
+        if ([typeStr containsString:@"奶粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"naifen"]];
+            ProjectID = @"552";
+        }
+        if ([typeStr containsString:@"饼干"]) {
+            [typeImg setImage:[UIImage imageNamed:@"binggan"]];
+            ProjectID = @"715";
+        }
+        if ([typeStr containsString:@"减肥药"]) {
+            [typeImg setImage:[UIImage imageNamed:@"zuoxuanroujian"]];
+            ProjectID = @"690";
+        }
+        if ([typeStr containsString:@"玛卡"]) {
+            [typeImg setImage:[UIImage imageNamed:@"maka"]];
+            ProjectID = @"684";
+        }
+        if ([typeStr containsString:@"纸尿裤"]) {
+            [typeImg setImage:[UIImage imageNamed:@"zhiniaoku"]];
+            ProjectID = @"606";
+        }
+        if ([typeStr containsString:@"辣椒粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"lajiaofen"]];
+            ProjectID = @"650";
+        }
+        if ([typeStr containsString:@"木材"]) {
+            [typeImg setImage:[UIImage imageNamed:@"mucai"]];
+            ProjectID = @"665";
+        }
+        if ([typeStr containsString:@"阿胶"]) {
+            [typeImg setImage:[UIImage imageNamed:@"ajiao"]];
+            ProjectID = @"556";
+        }
+        if ([typeStr containsString:@"巧克力"]) {
+            [typeImg setImage:[UIImage imageNamed:@"qiaokeli"]];
+            ProjectID = @"696";
+        }
+        if ([typeStr containsString:@"檀木"]) {
+            [typeImg setImage:[UIImage imageNamed:@"tanmu"]];
+            ProjectID = @"786";
+        }
+        
+    }else if (deviceType == 1){
+        if ([typeStr containsString:@"片剂"]) {
+            [typeImg setImage:[UIImage imageNamed:@"yaopian"]];
+            ProjectID = @"581";
+        }
+        if ([typeStr containsString:@"茶叶"]) {
+            [typeImg setImage:[UIImage imageNamed:@"chaye"]];
+            ProjectID = @"801";
+        }
+        if ([typeStr containsString:@"枸杞"]) {
+            [typeImg setImage:[UIImage imageNamed:@"gouqi"]];
+            ProjectID = @"804";
+        }
+        if ([typeStr containsString:@"大米"]) {
+            [typeImg setImage:[UIImage imageNamed:@"dami"]];
+            ProjectID = @"795";
+        }
+        if ([typeStr containsString:@"奶粉"]) {
+            [typeImg setImage:[UIImage imageNamed:@"naifen"]];
+            ProjectID = @"792";
+        }
+        if ([typeStr containsString:@"狗粮"]) {
+            [typeImg setImage:[UIImage imageNamed:@"gouliang"]];
+            ProjectID = @"796";
+        }
+    }
+    return ProjectID;
+}
+
 
 
 
@@ -161,7 +189,38 @@
     NSLog(@"%@",receData);
     if ([receData containsString:@"异常"]) {
         segueToResult = @"执行异常";
-    }else{
+    }
+    else if ([receData containsString:@"韵颜"]){
+        segueToResult = @"劣质阿胶";
+    }
+    else if ([receData containsString:@"太极"]){
+        segueToResult = @"优质阿胶";
+    }
+    else if ([receData containsString:@"粉滑"]){
+        segueToResult = @"面粉（滑石粉）";
+    }
+    else if ([receData containsString:@"五常"]){
+        segueToResult = @"非陈粮";
+    }
+    else if ([receData containsString:@"陈化"]){
+        segueToResult = @"陈粮";
+    }
+    else if ([receData containsString:@"昊红"]){
+        segueToResult = @"非熏蒸枸杞";
+    }
+    else if ([receData containsString:@"塞翁福"]){
+        segueToResult = @"熏蒸枸杞";
+    }
+    else if ([receData containsString:@"龙井特级"]){
+        segueToResult = @"龙井特级";
+    }
+    else if ([receData containsString:@"一级龙井"]){
+        segueToResult = @"一级龙井";
+    }
+    else if ([receData containsString:@"二级龙井"]){
+        segueToResult = @"二级龙井";
+    }
+    else{
         NSArray *arrys1= [receData componentsSeparatedByString:@"\""];
         NSString* str1=(NSString *)arrys1[3];
         NSLog(@"%@",str1);
@@ -170,26 +229,19 @@
     return segueToResult;
 }
 
-
-
 //从模型中获取工作流
-+ (void)getModelRestData:(NSString*)projectIDstr{
++ (void)getHttp{
     ///*
     NSString*result;
     NSString* urlStr = @"http://115.29.198.253:8088/WCF/Service/GetConfig/";
-    urlStr = [urlStr stringByAppendingFormat:@"%@",projectIDstr];
+    urlStr = [urlStr stringByAppendingFormat:@"581"];
     NSLog(@"%@",urlStr);
     
     //NSURL *url = [NSURL URLWithString:@"http://www.baidu.com"];
     NSURL *url = [NSURL URLWithString:urlStr];
     NSURLRequest * request = [NSURLRequest requestWithURL:url];
     NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-    //NSLog(@"%@",data);
     result = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    if (result != nil) {
-        NSLog(@"%@",result);
-        NSLog(@"继续");
-    }
 }
 
 //从模型中获取工作流
@@ -203,7 +255,6 @@
     NSURL *url = [NSURL URLWithString:urlStr];
     NSURLRequest * request = [NSURLRequest requestWithURL:url];
     NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-    //NSLog(@"%@",data);
     result = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"%@",result);
     
@@ -331,6 +382,31 @@
     return returnArr;
 }
 
++ (BOOL)isCbDataCurrent: (double*)cb : (int)workFlowPoints{
+    NSMutableArray *_isCurrentDataArray = [[NSMutableArray alloc]initWithCapacity:workFlowPoints];
+    for (int i = 0; i < workFlowPoints; i++) {
+        [_isCurrentDataArray addObject:@(cb[i])];
+    }
+    double dataMax = [[_isCurrentDataArray valueForKeyPath:@"@max.floatValue"]doubleValue];
+    if (dataMax > 1000) {
+        return YES;
+    }else{
+        return NO;
+    }
+}
+
++ (BOOL)isIntentDataCurrent: (double*)intent : (int)workFlowPoints{
+    NSMutableArray *_isCurrentDataArray = [[NSMutableArray alloc]initWithCapacity:workFlowPoints];
+    for (int i = 0; i < workFlowPoints; i++) {
+        [_isCurrentDataArray addObject:@(intent[i])];
+    }
+    double dataMax = [[_isCurrentDataArray valueForKeyPath:@"@max.floatValue"]doubleValue];
+    if (dataMax > 100) {
+        return YES;
+    }else{
+        return NO;
+    }
+}
 
 
 @end
