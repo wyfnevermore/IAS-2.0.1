@@ -12,6 +12,11 @@
 
 - (void)setExtraCellLineHidden: (UITableView *)tableView;
 
-+ (void)showIng:(NSString*)title :(UIActivityIndicatorView*)mActivityInView :(UIView*)backView :(UILabel*)ingLabel;
+
++ (void)showIng:(NSString*)title : (UIWebView*)mloadingWebView :(UIView*)backView :(UILabel*)ingLabel;
+
+- (UIViewController *)getCurrentVC;
+
+- (UIViewController *)getCurrentVCFrom:(UIViewController *)rootVC;
 
 @end

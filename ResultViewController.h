@@ -18,4 +18,6 @@
 @property (strong, nonatomic)NSMutableArray* dataXGDArray;
 @property (strong, nonatomic)NSMutableArray* dataBCArray;
 
+- (IBAction)test:(id)sender;
+
 @end

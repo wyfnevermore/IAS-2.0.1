@@ -21,36 +21,86 @@
     [view reloadInputViews];
 }
 
-+ (void)showIng:(NSString*)title :(UIActivityIndicatorView*)mActivityInView :(UIView*)backView :(UILabel*)ingLabel{
++ (void)showIng:(NSString*)title : (UIWebView*)mloadingWebView :(UIView*)backView :(UILabel*)ingLabel{
     //1. 取出window
     UIWindow * window = [[UIApplication sharedApplication] keyWindow];
     //2. 创建背景视图
     backView.frame = window.bounds;
     //3. 背景颜色可以用多种方法
-    backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.9];
+    if ([title containsString:@"连接设备"]) {
+        backView.backgroundColor = [UIColor colorWithRed:28.0/255 green:33.0/255 blue:38.0/255 alpha:1];
+        ingLabel.textColor = [UIColor whiteColor];
+    }else if([title containsString:@"采集参比"]){
+        backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:1.0];
+        ingLabel.textColor = [UIColor whiteColor];
+    }else{
+        backView.backgroundColor = [[UIColor whiteColor]colorWithAlphaComponent:1.0];
+        ingLabel.textColor = [UIColor blackColor];
+    }
     //backView.backgroundColor = [UIColor colorWithWhite:0.1 alpha:0.85];
     [window addSubview:backView];
+    
     //4. 把需要展示的控件添加上去
-    ingLabel.frame = CGRectMake(SCREENWIDTH*0.16, SCREENHEIGHT*0.56, SCREENWIDTH*0.7, SCREENHEIGHT*0.068);
+    mloadingWebView.hidden = NO;
+    
+    ingLabel.frame = CGRectMake(SCREENWIDTH*0.16, SCREENHEIGHT*0.58, SCREENWIDTH*0.7, SCREENHEIGHT*0.068);
     ingLabel.text = title;
-    ingLabel.textColor = [UIColor whiteColor];
     ingLabel.textAlignment = NSTextAlignmentCenter;
     ingLabel.font = [UIFont systemFontOfSize:25];
-    [window addSubview:ingLabel];
     
-    //mActivityInView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    mActivityInView.center = CGPointMake(SCREENWIDTH*0.5f, SCREENWIDTH*0.84f);//只能设置中心，不能设置大小
-    mActivityInView.color = [UIColor whiteColor]; // 改变圈圈的颜色
-    CGAffineTransform transformInit = CGAffineTransformMakeScale(0.1f, 0.1f);
-    mActivityInView.transform = transformInit;
-    [mActivityInView startAnimating]; // 开始旋转
-    [window addSubview:mActivityInView];
     
     //5. 出现动画简单
-    [UIView animateWithDuration:0.3 animations:^{
-        CGAffineTransform transformNormal = CGAffineTransformMakeScale(3.0f, 3.0f);
-        mActivityInView.transform = transformNormal;
+    [UIView animateWithDuration:0.1 animations:^{
+        if ([title containsString:@"采集样品"]) {
+            mloadingWebView.frame = CGRectMake(SCREENWIDTH*0.35, SCREENHEIGHT*0.36, SCREENWIDTH*0.3,SCREENWIDTH*0.3);
+        }else if([title containsString:@"采集参比"]){
+            mloadingWebView.frame = CGRectMake(SCREENWIDTH*0.3, SCREENHEIGHT*0.34, SCREENWIDTH*0.4,SCREENWIDTH*0.4);
+        }else{
+            mloadingWebView.frame = CGRectMake(SCREENWIDTH*0.1, SCREENHEIGHT*0.33, SCREENWIDTH*0.8,SCREENWIDTH*0.6);
+        }
     }];
+    
+    [window addSubview:mloadingWebView];
+    [window addSubview:ingLabel];
+}
+
+//获取当前屏幕显示的viewcontroller
+- (UIViewController *)getCurrentVC
+{
+    UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    UIViewController *currentVC = [self getCurrentVCFrom:rootViewController];
+    
+    return currentVC;
+}
+
+- (UIViewController *)getCurrentVCFrom:(UIViewController *)rootVC
+{
+    UIViewController *currentVC;
+    
+    if ([rootVC presentedViewController]) {
+        // 视图是被presented出来的
+        
+        rootVC = [rootVC presentedViewController];
+    }
+    
+    if ([rootVC isKindOfClass:[UITabBarController class]]) {
+        // 根视图为UITabBarController
+        
+        currentVC = [self getCurrentVCFrom:[(UITabBarController *)rootVC selectedViewController]];
+        
+    } else if ([rootVC isKindOfClass:[UINavigationController class]]){
+        // 根视图为UINavigationController
+        
+        currentVC = [self getCurrentVCFrom:[(UINavigationController *)rootVC visibleViewController]];
+        
+    } else {
+        // 根视图为非导航类
+        
+        currentVC = rootVC;
+    }
+    
+    return currentVC;
 }
 
 @end

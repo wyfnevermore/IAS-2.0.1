@@ -27,7 +27,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _type.frame = CGRectMake(screenWidth*0.0845, screenHeight*0.12, screenWidth*0.8575, screenHeight*0.08*4);
+    _type.frame = CGRectMake(screenWidth*0.0845, screenHeight*0.12, screenWidth*0.9, screenHeight*0.08*4);
     if ([_name containsString:@"奶粉"] || [_name containsString:@"能量"]){
         _type.textAlignment = NSTextAlignmentLeft;
     }else{
@@ -43,6 +43,7 @@
     //吸光度图谱
     [self.view addSubview:self.lineView];
     self.lineView.data = [self setData];
+    //_lineView.hidden = YES;
 }
 
 //折线图
@@ -209,4 +210,7 @@
 
 
 
+- (IBAction)test:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
 @end

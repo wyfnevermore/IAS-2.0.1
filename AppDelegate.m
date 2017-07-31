@@ -7,8 +7,12 @@
 //
 
 #import "AppDelegate.h"
+#import "ViewController.h"
 
 @interface AppDelegate ()
+
+/** Reachability */
+@property (nonatomic,weak) Reachability *hostReach;
 
 @end
 
@@ -17,11 +21,58 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    Reachability *reach = [Reachability reachabilityWithHostName:@"www.baidu.com"];
+    self.hostReach = reach;
+    //开启网络状况监听
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(netStatusChange:) name:kReachabilityChangedNotification object:nil];
+    ///开启监听，会启动一个run loop
+    [self.hostReach startNotifier];
+    
     // 启动图片延时
     [NSThread sleepForTimeInterval:0.5];
     return YES;
 }
 
+/**
+ *此函数通过判断联网方式，通知给用户
+ */
+- (void)reachabilityChanged:(NSNotification *)notification
+{
+    Reachability *curReachability = [notification object];
+    NSParameterAssert([curReachability isKindOfClass:[Reachability class]]);
+    NetworkStatus curStatus = [curReachability currentReachabilityStatus];
+    if(curStatus == NotReachable) {
+        NSDictionary *dic = @{@"status":@"0"};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"isNotReachable" object:nil userInfo:dic];
+    }else{
+        NSDictionary *dic = @{@"status":@"1"};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"noNotReachable" object:nil userInfo:dic];
+    }
+}
+
+///  监听通知回调
+- (void)netStatusChange:(NSNotification *)note{
+    Reachability *currentReach = [note object];
+    NSParameterAssert([currentReach isKindOfClass:[Reachability class]]);
+    //判断网络状态
+    switch (self.hostReach.currentReachabilityStatus) {
+        case NotReachable:
+            NSLog(@"网络不通");
+            self.connectEnable = NO;
+            break;
+        case ReachableViaWiFi:
+            NSLog(@"wifi上网");
+            self.connectEnable = YES;
+            break;
+        case ReachableViaWWAN:
+            NSLog(@"手机上网");
+            self.connectEnable = YES;
+            break;
+        default:
+            break;
+    }
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -49,6 +100,8 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
     [self saveContext];
+    
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
 
