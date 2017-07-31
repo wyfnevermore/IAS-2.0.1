@@ -21,6 +21,7 @@
 
 + (NSString*)setModelType:(NSString*)typeStr : (UIImageView*)typeImg :(NSInteger)deviceType;//选择模型后换图片，改projectID
 
+<<<<<<< HEAD
 +(void)activeWorkFlow:(NSString*)workFlowStr :(CBPeripheral*)mPeripheral : (CBCharacteristic*)characteristic;//激活工作流
 
 + (NSString*)getRestData : (NSString*)projectIDstr : (NSString*)datastr;//请求检测结果
@@ -35,6 +36,15 @@
 
 + (double)getScanTime : (NSData*)scanTimeData;//得到第一包数据后的处理得到的扫描时间
 
+=======
++ (NSString*)getRestData : (NSString*)projectIDstr : (NSString*)datastr;//请求检测结果
 
++ (void)getHttp;
+>>>>>>> origin/master
+
+
++ (BOOL)isCbDataCurrent: (double*)cb : (int)workFlowPoints;
+
++ (BOOL)isIntentDataCurrent: (double*)intent : (int)workFlowPoints;
 
 @end

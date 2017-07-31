@@ -48,6 +48,16 @@
     ingLabel.textAlignment = NSTextAlignmentCenter;
     ingLabel.font = [UIFont systemFontOfSize:25];
     
+<<<<<<< HEAD
+=======
+    //mActivityInView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    mActivityInView.center = CGPointMake(SCREENWIDTH*0.5f, SCREENHEIGHT*0.45f);//只能设置中心，不能设置大小
+    mActivityInView.color = [UIColor whiteColor]; // 改变圈圈的颜色
+    CGAffineTransform transformInit = CGAffineTransformMakeScale(0.1f, 0.1f);
+    mActivityInView.transform = transformInit;
+    [mActivityInView startAnimating]; // 开始旋转
+    [window addSubview:mActivityInView];
+>>>>>>> origin/master
     
     //5. 出现动画简单
     [UIView animateWithDuration:0.1 animations:^{

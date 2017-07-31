@@ -20,6 +20,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setUI];
+<<<<<<< HEAD
 
     statement = 0;//采参比
     isAppBtnPress = NO;
@@ -27,6 +28,13 @@
     isdanliang = NO;
     isCaijiInited = false;
     projectIDStr = @"581";
+=======
+    
+    isReconnected = NO;
+    isdanliang = NO;
+    projectIDStr = @"581";
+    [Tools getHttp];//测试网络环境
+>>>>>>> origin/master
     formerType = @"562";
     workFlowPoints = 801;//点数，在此修改
     workFlowPointsType = 2;//2即为把420点差分成801
@@ -36,7 +44,10 @@
     _typePickView.dataSource = self;
     
     //初始化
+<<<<<<< HEAD
     netWork = [[NetWork alloc]init];
+=======
+>>>>>>> origin/master
     workFlowArr = [[NSMutableArray alloc]init];
     workFlowName = [[NSMutableArray alloc]init];
     workFlowDetail = [[NSMutableArray alloc]init];
@@ -47,15 +58,19 @@
     NSDictionary *options = @{CBCentralManagerOptionShowPowerAlertKey:@"NO"};
     self.myCentralManager = [[CBCentralManager alloc]initWithDelegate:self queue:nil options:options];
     
+<<<<<<< HEAD
     //开启网络监听
     [netWork get];//测试网络环境
     [netWork networkStatusChangeAFN];
     
+=======
+>>>>>>> origin/master
     //设置label点击事件
     _typeLabel.userInteractionEnabled = YES;
     UITapGestureRecognizer *labelTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
     [_typeLabel addGestureRecognizer:labelTapGestureRecognizer];
     
+<<<<<<< HEAD
     //设置背景点击事件
     _lowestView.userInteractionEnabled = YES;
     [self tapGestureRecognizer];
@@ -76,6 +91,20 @@
     _deviceType = 100;//因为默认为0，所以随便设一个，不然默认就是手持,也用来判断是不是第一次选择
     [self showDeviceType];//一定放最后
 
+=======
+    //load控件初始化
+    _mActivityIndicatorView = [[UIActivityIndicatorView alloc]init];
+    _ingBgView = [[UIView alloc]init];
+    _deviceTypeChooseTitle = [[UILabel alloc]init];
+    
+    //设置背景点击事件
+    _lowestView.userInteractionEnabled = YES;
+    [self tapGestureRecognizer];
+    
+    //选择设备型号
+    _deviceType = 100;//因为默认为0，所以随便设一个，不然默认就是手持,也用来判断是不是第一次选择
+    [self showDeviceType];//一定放最后
+>>>>>>> origin/master
 }
 
 //1.开始查看服务, 蓝牙开启
@@ -307,6 +336,7 @@
 //获取外设发来的数据,不论是read和notify，http请求当前模型的建模参数，合成云端工作流结构体，用蓝牙设置为当前工作流。
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
     [peripheral readRSSI];
+<<<<<<< HEAD
     
     if([characteristic.UUID.UUIDString containsString:@"412E"]){
         outsidedatapackageNumber++;
@@ -333,12 +363,15 @@
         }
     }
     
+=======
+>>>>>>> origin/master
     if ([characteristic.UUID.UUIDString containsString:@"4113"]) {//获取本机工作流数量
         NSData* data = characteristic.value;
         NSString *Number = [Tools hexadecimalString:data];
         Number = [Number substringToIndex:2];
         workFlowNumber = [Number intValue];
         NSLog(@"工作流数量：%d",workFlowNumber);
+<<<<<<< HEAD
     }
     
     if([characteristic.UUID.UUIDString containsString:@"4115"]){//获取工作流配置列表
@@ -355,6 +388,33 @@
                 testbigstring = workFlowArr[0];
                 NSLog(@"第一个工作流index：%@,存着，遍历完特征UUID再用",testbigstring);
                 [self requestWorkFlowData];//请求工作流结构体
+=======
+        NSString *tdata = @"01";
+        NSData* value = [Tools dataWithHexstring:tdata];
+        NSLog(@"入口");
+        if (isReconnected == NO) {
+            [_myPeripheral writeValue:value forCharacteristic:_requestStoredConfigurationCharacteristicList type:CBCharacteristicWriteWithResponse];
+        }else{
+            [self setAllReady];//连接完成！
+        }
+    }
+    //获取工作流配置列表
+    if([characteristic.UUID.UUIDString containsString:@"4115"]){
+        if (isReconnected == NO) {
+            NSData* data = characteristic.value;
+            NSString* list = [Tools hexadecimalString:data];
+            NSLog(@"配置包：%@",list);
+            if ([[list substringWithRange:NSMakeRange(0, 2)]containsString:@"1"] && workFlowArr.count == 0) {
+                workFlowData = [Tools hexadecimalString:data];
+                NSLog(@"配置列表：%@",workFlowData);
+                [workFlowArr addObject:[workFlowData substringWithRange:NSMakeRange(2, 4)]];
+                testbigstring = workFlowArr[0];
+                dispatch_time_t partTime = dispatch_time(DISPATCH_TIME_NOW, 2*NSEC_PER_SEC);//这里加延时是因为上一个到这个写入间隔太快，不加会出错
+                dispatch_after(partTime, dispatch_get_main_queue(), ^{
+                    [self requestWorkFlowData];
+                    NSLog(@"工作流：%@",workFlowArr);
+                });
+>>>>>>> origin/master
             }
         }
     }
@@ -376,7 +436,11 @@
         if (packageWorkFlowNo > 1) {
             for (int c = 0; c<len-1; c++) {
                 returnWorkFlowData[returnByteWorkFlowNo] = byteData[c+1];
+<<<<<<< HEAD
                 if (returnByteWorkFlowNo == (packageNumber - 1) * 19) {
+=======
+                if (returnByteWorkFlowNo == (packageNumber-1)*19) {
+>>>>>>> origin/master
                     bool isGetScanConfig = getScanCofig(returnWorkFlowData,&(scanConfigWorkFlow));
                     NSLog(@"有无数据：%d,扫描类型：%s,%hhu(0为column，1为hardma)，点数：%hu，波长：%hu到%hu,平均次数:%hu。",isGetScanConfig,scanConfigWorkFlow.slewScanCfg.head.config_name,scanConfigWorkFlow.slewScanCfg.section[0].section_scan_type,scanConfigWorkFlow.slewScanCfg.section[0].num_patterns,scanConfigWorkFlow.slewScanCfg.section[0].wavelength_start_nm,scanConfigWorkFlow.slewScanCfg.section[0].wavelength_end_nm,scanConfigWorkFlow.slewScanCfg.head.num_repeats);
                     changedScanConfigWorkFlow = scanConfigWorkFlow;//获得工作流模版
@@ -400,6 +464,22 @@
         NSLog(@"计数：%d，%d",packageWorkFlowNo,returnByteWorkFlowNo);
     }
     
+<<<<<<< HEAD
+=======
+    if([characteristic.UUID.UUIDString containsString:@"412E"]){
+        outsidedatapackageNumber++;
+        NSData* data = characteristic.value;
+        NSString *outsideData = [Tools hexadecimalString:data];
+        NSLog(@"哇啦啦啦%@，计数:%d",outsideData,outsidedatapackageNumber);
+        if (outsidedatapackageNumber == 2) {
+            if (outsideData != nil) {
+                [outsideArr addObject:outsideData];
+                NSLog(@"%@收到的外部数据",outsideArr);
+            }
+        }
+    }
+    
+>>>>>>> origin/master
     //扫描，获取第一次写入时返回的数据，需再次写入，再次写入获得的才是光谱数据
     if([characteristic.UUID.UUIDString containsString:@"411D"]&&characteristic.properties == 0x10){
         NSData* data = characteristic.value;
@@ -470,6 +550,7 @@
                             NSLog(@"C++参比处理结果:%d",isGetDataCB);
                             BOOL isDataRight = [Tools isCbDataCurrent:cb :workFlowPoints];
                             if (isDataRight == YES) {
+<<<<<<< HEAD
                                 [_uplabel setText:@"参比已采集，请采集样品!"];
                                 formerType = projectIDStr;
                                 [_writeBtn setTitle:@"开始采集" forState:UIControlStateNormal];
@@ -479,11 +560,23 @@
                                 [self warningCB];
                             }
                             [self stoping];//停止loading动画
+=======
+                                [_uplabel setText:@"采集参比完成，请采集样品!"];
+                                isCbInited = true;
+                                formerType = projectIDStr;
+                                [self stoping];//停止loading
+                                [_writeBtn setTitle:@"采集样品" forState:UIControlStateNormal];
+                            }else if(isDataRight == NO){
+                                [self warningCB];
+                            }
+                            _writeBtn.userInteractionEnabled = YES;
+>>>>>>> origin/master
                             break;
                         }
                         case 1:{//采集完成后，收到样品数据用C++方法处理，再和参比数据比对后得到吸光度光谱数据,将得到的吸光度数据http发送给云端（奶粉定量、饼干等需要多次请求数据）
                             bool isGetDataYP = getDLPData(returnData,waveLength, intentsities,workFlowPointsType);
                             NSLog(@"C++样品检测结果：%d",isGetDataYP);
+<<<<<<< HEAD
                             BOOL isDataRight = [Tools isIntentDataCurrent:intentsities :workFlowPoints];//判断样品光谱是否正常
                             if (isDataRight == YES ) {
                                 if ([self connectedToNetwork]) {
@@ -498,6 +591,94 @@
                                     [alertController addAction: okAction];
                                     [self presentViewController:alertController animated:YES completion:nil];
                                 }
+=======
+                            
+                            BOOL isDataRight = [Tools isIntentDataCurrent:intentsities :workFlowPoints];//判断样品光谱是否正常
+                            if (isDataRight == YES) {
+                                [_uplabel setText:@"采集样品完成！"];
+                                _writeBtn.userInteractionEnabled = YES;
+                                dataString = [self getAbs:cb intentsities:intentsities];
+                                if ([projectIDStr intValue] == 552) {
+                                    NSString *titleStr = [Tools getRestData:projectIDStr :dataString];
+                                    if ([titleStr containsString:@"三聚氰胺"]) {
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"        %@\n",titleStr]];
+                                    }else{
+                                        projectIDStr = @"626";
+                                        NSString* danbaiStr = [Tools getRestData:projectIDStr :dataString];
+                                        danbaiStr = [danbaiStr substringToIndex:danbaiStr.length-1];
+                                        danbaiStr = [danbaiStr stringByAppendingString:@"g"];
+                                        projectIDStr = @"632";
+                                        NSString* tanshuiStr = [Tools getRestData:projectIDStr :dataString];
+                                        tanshuiStr = [tanshuiStr substringToIndex:tanshuiStr.length-1];
+                                        tanshuiStr = [tanshuiStr stringByAppendingString:@"g"];
+                                        projectIDStr = @"631";
+                                        NSString* zhifangStr = [Tools getRestData:projectIDStr :dataString];
+                                        zhifangStr = [zhifangStr substringToIndex:zhifangStr.length-1];
+                                        zhifangStr = [zhifangStr stringByAppendingString:@"g"];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"                  %@\n",titleStr]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"\n"]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"每100g含：\n"]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"           %@\n",danbaiStr]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"   %@\n",tanshuiStr]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"               %@",zhifangStr]];
+                                        NSLog(@"结果：%@",_showResultNow);
+                                    }
+                                    projectIDStr = @"552";
+                                }else if ([projectIDStr intValue] == 792){//小罐子奶粉
+                                    NSString *titleStr = [Tools getRestData:projectIDStr :dataString];
+                                    if ([titleStr containsString:@"三聚氰胺"]) {
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"        %@\n",titleStr]];
+                                    }else{
+                                        projectIDStr = @"787";
+                                        NSString* naifendingxin = [Tools getRestData:projectIDStr :dataString];
+                                        projectIDStr = @"788";
+                                        NSString* naifendingliang = [Tools getRestData:projectIDStr :dataString];
+                                        naifendingliang = [naifendingliang substringToIndex:naifendingliang.length-1];
+                                        NSArray *arrys= [naifendingliang componentsSeparatedByString:@";"];
+                                        NSString* danbaiStr = (NSString *)arrys[0];
+                                        NSString* zhifangStr = (NSString *)arrys[1];
+                                        NSString* tanshuiStr = (NSString *)arrys[2];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"%@\n",naifendingxin]];
+                                        //[_showResultNow appendString:[NSString stringWithFormat:@"\n"]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"每100g含：\n"]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"               %@\n",danbaiStr]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"       %@\n",tanshuiStr]];
+                                        [_showResultNow appendString:[NSString stringWithFormat:@"                   %@",zhifangStr]];
+                                    }
+                                    projectIDStr = @"792";
+                                }
+                                else if ([projectIDStr intValue] == 715){//饼干
+                                    NSString* danbaiStr = [Tools getRestData:projectIDStr :dataString];
+                                    danbaiStr = [danbaiStr substringToIndex:danbaiStr.length-1];
+                                    danbaiStr = [danbaiStr stringByAppendingString:@"g"];
+                                    projectIDStr = @"716";
+                                    NSString* zhifangStr = [Tools getRestData:projectIDStr :dataString];
+                                    zhifangStr = [zhifangStr substringToIndex:zhifangStr.length-1];
+                                    zhifangStr = [zhifangStr stringByAppendingString:@"g"];
+                                    projectIDStr = @"717";
+                                    NSString* tanshuiStr = [Tools getRestData:projectIDStr :dataString];
+                                    tanshuiStr = [tanshuiStr substringToIndex:tanshuiStr.length-1];
+                                    tanshuiStr = [tanshuiStr stringByAppendingString:@"g"];
+                                    projectIDStr = @"718";
+                                    NSString* nengliangStr = [Tools getRestData:projectIDStr :dataString];
+                                    nengliangStr = [nengliangStr substringToIndex:nengliangStr.length-1];
+                                    nengliangStr = [nengliangStr stringByAppendingString:@"KJ"];
+                                    
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"每100g含：\n"]];
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"          %@\n",danbaiStr]];
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"              %@\n",zhifangStr]];
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"  %@\n",tanshuiStr]];
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"              %@",nengliangStr]];
+                                    NSLog(@"结果：%@",_showResultNow);
+                                    projectIDStr = @"715";
+                                }else{
+                                    NSString* Result = [Tools getRestData:projectIDStr :dataString];
+                                    [_showResultNow appendString:[NSString stringWithFormat:@"%@",Result]];
+                                }
+                                [self stoping];//结束loading
+                                [_uplabel setText:@"样品采集完成！"];
+                                [self performSegueWithIdentifier:@"result" sender:self];//结果接收,收到结果并处理，跳转
+>>>>>>> origin/master
                             }else if(isDataRight == NO){
                                 [self warningIntent];
                             }
@@ -507,6 +688,10 @@
                             NSLog(@"未进行扫描");
                             break;
                     }
+<<<<<<< HEAD
+=======
+                    init = 0;
+>>>>>>> origin/master
                     if (_deviceType == 1) {
                         [self writeToPeripheral:@"00" :_duojiCharacteristic];
                         if (isdanliang == YES) {
@@ -690,8 +875,14 @@
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
     packageNo = 1;
     returnByteNo = 0;
+<<<<<<< HEAD
     statement = 0;
     _reCollectCB.hidden = YES;
+=======
+    init = 1;
+    statement = 10;
+    
+>>>>>>> origin/master
     NSLog(@"periheral has disconnect");
     [self stoping];
     [_uplabel setText:@"连接断开！"];
@@ -713,6 +904,7 @@
         isReconnected = YES;
     }
     returnByteNo = 0;
+<<<<<<< HEAD
     
     if (timerStart.isValid){//终止扫描定时
         [timerStart invalidate];
@@ -720,6 +912,8 @@
     timerStart = nil;
     _typePickView.hidden = YES;
     _typePic.hidden = NO;
+=======
+>>>>>>> origin/master
 }
 
 //连接外设失败
@@ -836,11 +1030,25 @@
 //连接完成后
 -(void)allReady{
     if (_deviceType == 1) {
+<<<<<<< HEAD
         [self writeToPeripheral:@"00" :_ladengCharacteristic];
         [self writeToPeripheral:@"00" :_duojiCharacteristic];
     }
     [self chooseCurrentProject];
     
+=======
+        //[self writeToPeripheral:@"00" :_ladengCharacteristic];
+        //[self writeToPeripheral:@"00" :_duojiCharacteristic];
+    }
+    [self chooseCurrentProject];
+    [_uplabel setText:@"设备已连接，请采集参比！"];
+    [_uplabel setTextColor:[UIColor blackColor]];
+    [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
+    dispatch_time_t partTime = dispatch_time(DISPATCH_TIME_NOW, 3*NSEC_PER_SEC);
+    dispatch_after(partTime, dispatch_get_main_queue(), ^{
+        [self stoping];
+    });
+>>>>>>> origin/master
 }
 
 //UI 选择设备型号
@@ -912,7 +1120,11 @@
 - (void)hideAlertView{//确定
     returnByteWorkFlowNo = 0;
     if (_deviceType == 0) {
+<<<<<<< HEAD
         pickArray = [[NSArray alloc]initWithObjects:@"苹果",@"片剂",@"胶囊",@"乳胶",@"面粉",@"珍珠粉",@"爽身粉",@"保鲜膜",@"爬行垫",@"奶嘴",@"奶粉",@"饼干",@"减肥药",@"玛卡",@"纸尿裤",@"辣椒粉",@"阿胶",@"巧克力",@"檀木",@"体脂", nil];
+=======
+        pickArray = [[NSArray alloc]initWithObjects:@"片剂",@"胶囊",@"乳胶",@"面粉",@"珍珠粉",@"爽身粉",@"保鲜膜",@"爬行垫",@"奶嘴",@"奶粉",@"饼干",@"减肥药",@"玛卡",@"纸尿裤",@"辣椒粉",@"阿胶",@"巧克力",@"檀木", nil];
+>>>>>>> origin/master
         [_typePickView reloadAllComponents];
         [_typePic setImage:[UIImage imageNamed:@"pingguo"]];
         [_typeLabel setText:@"苹果"];
@@ -931,6 +1143,7 @@
     }];
 
     // 延迟几秒移除视图
+<<<<<<< HEAD
     [self performSelector:@selector(remove) withObject:nil afterDelay:1.2];
     _currentDeviceName.hidden = YES;
     
@@ -941,6 +1154,13 @@
     _typePickView.hidden = YES;
     
     [_typePickView selectRow:0 inComponent:0 animated:YES];
+=======
+    [self performSelector:@selector(remove) withObject:nil afterDelay:1.3];
+    //[self chooseCurrentProject];
+    
+    //搜索设备
+    [self searchDevices];
+>>>>>>> origin/master
 }
 
 - (void)remove{
@@ -983,11 +1203,22 @@
     NSString *typeStr = _typeLabel.text;
     projectIDStr = [Tools setModelType:typeStr :_typePic :_deviceType];
     NSLog(@"模型ID改为：%@",projectIDStr);
+<<<<<<< HEAD
     if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected && [self connectedToNetwork]){
         _workFlowForNow = [self getModelRestData:projectIDStr :changedScanConfigWorkFlow :_deviceType];
+=======
+    if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected){
+        _workFlowForNow = [Tools getModelRestDataEverytime:projectIDStr :changedScanConfigWorkFlow :_deviceType];
+        NSLog(@"得到的云端蓝牙工作流数据块：%@",_workFlowForNow);
+        [self sendWorkFlowToBle];//发送给蓝牙，设定当前工作流
+        if ([typeStr containsString:@"胶囊"]) {
+        //http请求当前模型的建模参数，合成云端工作流结构体，用蓝牙设置为当前工作流。
+        }
+>>>>>>> origin/master
     }
     [self stoping];
 }
+<<<<<<< HEAD
  
 - (IBAction)writeBtn:(id)sender {//采集参比，开始采集，搜索设备一个键
     if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected) {
@@ -1046,6 +1277,33 @@
     }
 }
 
+=======
+
+- (IBAction)done:(id)sender {//样品选择
+    _typePickView.hidden = YES;
+    _done.hidden = YES;
+    _typePic.hidden = NO;
+    [self chooseCurrentProject];
+}
+
+- (IBAction)writeBtn:(id)sender {//采集参比，采集样品，搜索设备一个键
+    if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected) {
+        if ([_writeBtn.currentTitle containsString:@"参比"]) {
+            [self collectCB];//采参比
+        }else {
+            [self collectIntent];//采样品
+        }
+    }else{//搜索设备(连接设备)[connect]
+        [self searchDevices];
+    }
+}
+
+- (IBAction)moniduankai:(id)sender {
+    
+}
+
+
+>>>>>>> origin/master
 - (IBAction)disconnect:(id)sender {
     if (_myPeripheral.state == CBPeripheralStateConnected) {
         [_myCentralManager cancelPeripheralConnection:_myPeripheral];
@@ -1067,6 +1325,7 @@
     }
 }
 
+<<<<<<< HEAD
 -(void)disconnectAlert{
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"连接已断开！" message:@"请重新连接设备" preferredStyle: UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
@@ -1098,6 +1357,13 @@
             [self presentViewController:alertController animated:YES completion:nil];
         }
     }
+=======
+
+- (IBAction)canbi:(id)sender {
+     if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected) {
+         [self collectCB];
+     }
+>>>>>>> origin/master
 }
 
 -(void)sendWorkFlowToBle :(NSMutableArray *)array{
@@ -1108,6 +1374,10 @@
     extLight = [extLight substringWithRange:NSMakeRange(11, 1)];
     NSLog(@"%@",extLight);
     if ([extLight intValue] == 1) {
+<<<<<<< HEAD
+=======
+        //[self writeToPeripheral:@"01" :_ladengCharacteristic];
+>>>>>>> origin/master
         isdanliang = NO;
     }else if ([extLight intValue] == 2){
         isdanliang = YES;
@@ -1117,17 +1387,33 @@
 }
 
 -(void)setAllReady{
+<<<<<<< HEAD
     [_uplabel setText:@"设备已连接，请采集参比！"];
     [_uplabel setTextColor:[UIColor blackColor]];
     [_writeBtn setTitle:@"采集参比" forState:UIControlStateNormal];
     [self allReady];
+=======
+    if (isReconnected == NO) {
+        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
+        [[NSRunLoop currentRunLoop] addTimer:timerStart forMode:NSDefaultRunLoopMode];
+    }else{
+        NSTimer *timerStart = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(allReady) userInfo:nil repeats:NO];
+        [[NSRunLoop currentRunLoop] addTimer:timerStart forMode:NSDefaultRunLoopMode];
+        //isReconnected = NO;
+    }
+>>>>>>> origin/master
 }
 
 -(void)warningCB{
     [self stoping];//停止loading
     [_uplabel setText:@"请重新采集参比！"];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"参比采集失败！" message:@"请正确使用参比板采集参比！" preferredStyle: UIAlertControllerStyleAlert];
+<<<<<<< HEAD
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+=======
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil
+                                   ];
+>>>>>>> origin/master
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"重新采集" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
         [self collectCB];
     }];
@@ -1138,8 +1424,13 @@
 
 -(void)warningIntent{
     [self stoping];//停止loading
+<<<<<<< HEAD
     [_uplabel setText:@"请重新开始采集！"];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"样品采集失败！" message:@"请重新开始采集！" preferredStyle: UIAlertControllerStyleAlert];
+=======
+    [_uplabel setText:@"请重新采集样品！"];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"样品采集失败！" message:@"请重新采集样品！" preferredStyle: UIAlertControllerStyleAlert];
+>>>>>>> origin/master
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil
                                    ];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"重新采样" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
@@ -1152,6 +1443,7 @@
 
 -(void)collectCB{
     [self initScan];
+<<<<<<< HEAD
     [_uplabel setText:@"正在采集参比..."];
     isScanningTitle = @"正在采集参比...";
     NSData *gif = [NSData dataWithContentsOfFile: [[NSBundle mainBundle] pathForResource:@"collectCB" ofType:@"gif"]];
@@ -1169,10 +1461,35 @@
 }
 
 -(void)initScan{
+=======
+    statement = 0;
+    [_uplabel setText:@"正在采集参比..."];
+    isScanningTitle = @"正在采集参比...";
+    [AboutUI showIng:isScanningTitle :_mActivityIndicatorView :_ingBgView :_deviceTypeChooseTitle];
+}
+
+- (void)collectIntent{//采集样品
+    [self initScan];
+    statement = 1;
+    _showResultNow = nil;
+    _showResultNow = [NSMutableString stringWithString:@""];
+    [_uplabel setText:@"正在采集样品..."];
+    isScanningTitle = @"正在采集样品...";
+    [AboutUI showIng:isScanningTitle :_mActivityIndicatorView :_ingBgView :_deviceTypeChooseTitle];
+}
+
+-(void)initScan{
+    // 初始化
+    packageNo = 1;
+    returnByteNo = 0;
+    init = 1;
+    //[self writeToPeripheral:@"01" :_duojiCharacteristic];
+>>>>>>> origin/master
     if (_deviceType == 1) {
         if (isdanliang == YES) {
             [self writeToPeripheral:@"01" :_ladengCharacteristic];
         }
+<<<<<<< HEAD
         if ([_writeBtn.currentTitle containsString:@"开始采集"]) {
             if (statement == 1) {
                 [self writeToPeripheral:@"01" :_duojiCharacteristic];
@@ -1185,6 +1502,17 @@
 
 -(void)searchDevices{//搜索设备
     isSystemConnectedAllover = NO;//连接完成后变为yes
+=======
+        if ([_writeBtn.currentTitle containsString:@"采集样品"]) {
+            //[self writeToPeripheral:@"01" :_duojiCharacteristic];
+        }
+    }
+    [self writeToPeripheral:@"00" :_startscanCharacteristic];
+    _writeBtn.userInteractionEnabled = NO;
+}
+
+-(void)searchDevices{//搜索设备
+>>>>>>> origin/master
     mCount = 0;
     [self.myCentralManager stopScan];
     if(_myPeripherals != nil){
@@ -1194,28 +1522,42 @@
     }
     returnByteWorkFlowNo = 0;
     [self scanClick];
+<<<<<<< HEAD
     
     NSData *gif = [NSData dataWithContentsOfFile: [[NSBundle mainBundle] pathForResource:@"connectDevice" ofType:@"gif"]];
     [_loadingWebView loadData:gif MIMEType:@"image/gif" textEncodingName:nil baseURL:nil];
 }
 
+=======
+}
+
+
+>>>>>>> origin/master
 -(void)stoping{
     _loadingWebView.frame = CGRectMake(SCREENWIDTH*0.5,SCREENHEIGHT*0.5,0,0);
     _ingBgView.frame = CGRectMake(0, 0, 0, 0);
     _deviceTypeChooseTitle.frame = CGRectMake(SCREENWIDTH*0.25, SCREENHEIGHT*0.7, 0, 0);
 }
 
+<<<<<<< HEAD
 -(void)loadGetWebData{
     [_deviceTypeChooseTitle setText:@"正在分析数据..."];
 }
 
+=======
+>>>>>>> origin/master
 //样品类型typelabel点击事件
 -(void) labelTouchUpInside:(UITapGestureRecognizer *)recognizer{
     UILabel *label = (UILabel*)recognizer.view;
     _typePic.hidden = YES;
     _typePickView.hidden = NO;
+<<<<<<< HEAD
     NSLog(@"当前类型：%@",label.text);
     [_writeBtn setTitle:@"确定" forState:UIControlStateNormal];
+=======
+    _done.hidden = NO;
+    NSLog(@"当前类型：%@",label.text);
+>>>>>>> origin/master
 }
 
 -(void)tapGestureRecognizer
@@ -1235,7 +1577,11 @@
     //点击视图
     NSLog(@"点击主屏幕");
     _deviceTableView.hidden = YES;
+<<<<<<< HEAD
     self.title = @"IAS";
+=======
+    self.title = @"检测";
+>>>>>>> origin/master
 }
 
 -(void)setUI{
@@ -1246,15 +1592,26 @@
     _typePickView.frame = CGRectMake(0, SCREENHEIGHT*0.355, SCREENWIDTH, SCREENHEIGHT*0.299);
     _writeBtn.frame = CGRectMake(SCREENWIDTH*0.169, SCREENHEIGHT*0.817, SCREENWIDTH*0.664, SCREENHEIGHT*0.083);
     _typelabelleft.frame = CGRectMake(SCREENWIDTH*0.2, SCREENHEIGHT*0.705, SCREENWIDTH*0.4, SCREENHEIGHT*0.041);
+<<<<<<< HEAD
     _typeLabel.frame = CGRectMake(SCREENWIDTH*0.46, SCREENHEIGHT*0.681, SCREENWIDTH*0.35, SCREENHEIGHT*0.082);
     _currentDeviceName.frame = CGRectMake(SCREENWIDTH*0.0483, SCREENHEIGHT*0.14, SCREENWIDTH, SCREENHEIGHT*0.041);
     
     [self.view bringSubviewToFront:_deviceTableView];
+=======
+    _done.frame = CGRectMake(SCREENWIDTH*0.8, SCREENHEIGHT*0.599, SCREENWIDTH*0.2, SCREENHEIGHT*0.1);
+    _typeLabel.frame = CGRectMake(SCREENWIDTH*0.46, SCREENHEIGHT*0.681, SCREENWIDTH*0.35, SCREENHEIGHT*0.082);
+    
+    [self.view bringSubviewToFront:_done];
+>>>>>>> origin/master
     [self.view sendSubviewToBack:_lowestView];
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:17.0/255 green:55.0/255 blue:108.0/255 alpha:1]];
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:22],NSForegroundColorAttributeName:[UIColor whiteColor]}];
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];//返回按钮
+<<<<<<< HEAD
     self.title = @"IAS";
+=======
+    self.title = @"检测";
+>>>>>>> origin/master
     [_writeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_writeBtn setBackgroundColor:[UIColor colorWithRed:20.0/255 green:61.0/255 blue:122.0/255 alpha:1]];
     _writeBtn.layer.cornerRadius = SCREENHEIGHT*0.041;//圆角的弧度
@@ -1267,12 +1624,15 @@
     _disconnect.layer.borderWidth = 1.0f;
     _disconnect.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
     
+<<<<<<< HEAD
     [_reCollectCB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_reCollectCB setBackgroundColor:[UIColor colorWithRed:20.0/255 green:61.0/255 blue:122.0/255 alpha:1]];
     _reCollectCB.layer.cornerRadius = 15;//圆角的弧度
     _reCollectCB.layer.borderWidth = 1.0f;
     _reCollectCB.layer.borderColor = [[UIColor colorWithRed:210.0/255 green:210.0/255 blue:210.0/255 alpha:1]CGColor];
     
+=======
+>>>>>>> origin/master
     
     _typeLabel.layer.borderWidth = 4.0f;
     _typeLabel.layer.cornerRadius = SCREENHEIGHT*0.041;
@@ -1288,6 +1648,7 @@
     
     [_uplabel setText:@"请打开蓝牙"];
     _typePickView.hidden = YES;
+<<<<<<< HEAD
     _deviceTableView.hidden = YES;
     _currentDeviceName.hidden = YES;
     _reCollectCB.hidden = YES;
@@ -1297,12 +1658,17 @@
     if (_myPeripheral != nil && _myPeripheral.state == CBPeripheralStateConnected) {
         //[self.myPeripheral readValueForCharacteristic:_deviceStatusCharacteristic];
     }
+=======
+    _done.hidden = YES;
+    _deviceTableView.hidden = YES;
+>>>>>>> origin/master
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+<<<<<<< HEAD
 
 -(BOOL) connectedToNetwork
 {
@@ -1570,5 +1936,7 @@
 }
 
 
+=======
+>>>>>>> origin/master
 
 @end

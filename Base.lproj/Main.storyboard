@@ -53,7 +53,11 @@
                                 <rect key="frame" x="-75" y="366" width="330" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sKl-5J-Xxe" id="bKs-YB-0lJ">
+<<<<<<< HEAD
                                     <rect key="frame" x="0.0" y="0.0" width="330" height="43.5"/>
+=======
+                                    <rect key="frame" x="0.0" y="0.0" width="330" height="43"/>
+>>>>>>> origin/master
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -76,7 +80,7 @@
                                         <rect key="frame" x="0.0" y="22" width="335" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iAR-h9-pQS" id="1hZ-Jq-Td6">
-                                            <rect key="frame" x="0.0" y="0.0" width="335" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="335" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9cr-yl-erX">
@@ -130,6 +134,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="MW9-bl-naZ">
+<<<<<<< HEAD
                         <barButtonItem key="leftBarButtonItem" style="plain" id="uXV-89-0rK">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="3sR-4j-ygH">
                                 <rect key="frame" x="20" y="7" width="80" height="30"/>
@@ -142,17 +147,29 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="plain" id="cHi-FK-HI2">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="n5I-Lr-6F7" userLabel="reCollectCB">
+=======
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="cHi-FK-HI2">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="n5I-Lr-6F7">
+>>>>>>> origin/master
                                 <rect key="frame" x="302" y="7" width="92" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="重采参比"/>
                                 <connections>
+<<<<<<< HEAD
                                     <action selector="reCollectCB:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nt8-M2-WoP"/>
+=======
+                                    <action selector="canbi:" destination="BYZ-38-t0r" eventType="touchUpInside" id="R4V-ct-bwy"/>
+>>>>>>> origin/master
                                 </connections>
                             </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+<<<<<<< HEAD
                         <outlet property="currentDeviceName" destination="NkX-Kc-6sX" id="S7P-qb-NvY"/>
+=======
+                        <outlet property="canbi" destination="n5I-Lr-6F7" id="08y-Ze-keI"/>
+>>>>>>> origin/master
                         <outlet property="deviceTableView" destination="AvG-uE-gQf" id="TfZ-rs-qWA"/>
                         <outlet property="disconnect" destination="3sR-4j-ygH" id="dWR-fU-ImH"/>
                         <outlet property="loadingWebView" destination="9dJ-hS-mI7" id="8ao-YS-vx3"/>
@@ -191,7 +208,7 @@
                                         <rect key="frame" x="0.0" y="40" width="414" height="55"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="c3b-FF-DQs" id="9bP-7j-vRn">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="54.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>

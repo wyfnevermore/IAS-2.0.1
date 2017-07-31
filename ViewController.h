@@ -70,9 +70,12 @@
     NSString *bluedatastr;
     NSString *isScanningTitle;
     double dataMax;
+<<<<<<< HEAD
     double scanTime;
     NSTimer *timerStart;
     NetWork *netWork;
+=======
+>>>>>>> origin/master
 }
 //BLE
 @property (strong, nonatomic) CBCentralManager* myCentralManager;
@@ -95,7 +98,10 @@
 @property (strong, nonatomic) CBCharacteristic* requestScanTimeCharacteristic;
 @property (strong, nonatomic) NSMutableString *showResultNow;
 @property (strong, nonatomic) NSMutableArray* isCurrentDataArray;
+<<<<<<< HEAD
 @property (nonatomic,weak) Reachability *hostReach;
+=======
+>>>>>>> origin/master
 
 //UI相关
 @property (strong, nonatomic)UIView *bgView;//半透明背景
@@ -116,21 +122,31 @@
 @property (weak, nonatomic) IBOutlet UIImageView *typePic;
 @property (weak, nonatomic) IBOutlet UIButton *disconnect;
 @property (weak, nonatomic) IBOutlet UIImageView *lowestView;
+<<<<<<< HEAD
 @property (weak, nonatomic) IBOutlet UIButton *reCollectCB;
 @property (weak, nonatomic) IBOutlet UILabel *currentDeviceName;
 @property (weak, nonatomic) IBOutlet UIWebView *loadingWebView;
+=======
+@property (weak, nonatomic) IBOutlet UIButton *canbi;
+>>>>>>> origin/master
 
 - (IBAction)writeBtn:(id)sender;
 
+- (IBAction)moniduankai:(id)sender;
 
 
 
 
 - (IBAction)disconnect:(id)sender;
+<<<<<<< HEAD
 - (IBAction)reCollectCB:(id)sender;
 
 - (BOOL) connectedToNetwork; 
+=======
+>>>>>>> origin/master
 
+
+- (IBAction)canbi:(id)sender;
 
 @end
 

@@ -81,7 +81,11 @@
         }
         if ([typeStr containsString:@"奶嘴"]) {
             [typeImg setImage:[UIImage imageNamed:@"naizui"]];
+<<<<<<< HEAD
             ProjectID = @"826";
+=======
+            ProjectID = @"720";
+>>>>>>> origin/master
         }
         if ([typeStr containsString:@"奶粉"]) {
             [typeImg setImage:[UIImage imageNamed:@"naifen"]];
@@ -121,6 +125,7 @@
         }
         if ([typeStr containsString:@"檀木"]) {
             [typeImg setImage:[UIImage imageNamed:@"tanmu"]];
+<<<<<<< HEAD
             ProjectID = @"830";
         }
         if ([typeStr containsString:@"苹果"]) {
@@ -130,6 +135,9 @@
         if ([typeStr containsString:@"体脂"]) {
             [typeImg setImage:[UIImage imageNamed:@"tizhilv"]];
             ProjectID = @"831";
+=======
+            ProjectID = @"786";
+>>>>>>> origin/master
         }
         
     }else if (deviceType == 1){
@@ -145,6 +153,7 @@
             [typeImg setImage:[UIImage imageNamed:@"gouqi"]];
             ProjectID = @"804";
         }
+<<<<<<< HEAD
         if ([typeStr containsString: @"大米"]) {
             [typeImg setImage:[UIImage imageNamed:@"dami"]];
             ProjectID = @"795";
@@ -153,13 +162,25 @@
             [typeImg setImage:[UIImage imageNamed:@"gouliang"]];
             ProjectID = @"796";
         }
+=======
+        if ([typeStr containsString:@"大米"]) {
+            [typeImg setImage:[UIImage imageNamed:@"dami"]];
+            ProjectID = @"795";
+        }
+>>>>>>> origin/master
         if ([typeStr containsString:@"奶粉"]) {
             [typeImg setImage:[UIImage imageNamed:@"naifen"]];
             ProjectID = @"792";
         }
+<<<<<<< HEAD
         if ([typeStr containsString:@"婴儿奶粉"]) {
             [typeImg setImage:[UIImage imageNamed:@"zhiniaoku"]];
             
+=======
+        if ([typeStr containsString:@"狗粮"]) {
+            [typeImg setImage:[UIImage imageNamed:@"gouliang"]];
+            ProjectID = @"796";
+>>>>>>> origin/master
         }
     }
     return ProjectID;
@@ -233,6 +254,7 @@
     else if ([receData containsString:@"二级龙井"]){
         segueToResult = @"二级龙井";
     }
+<<<<<<< HEAD
     else if ([receData containsString:@"飞鹤超级飞帆2"]){
         segueToResult = @"飞鹤超级飞帆奶粉";
     }
@@ -267,6 +289,8 @@
         segueToResult = [segueToResult substringToIndex:segueToResult.length-11];
         segueToResult = [NSString stringWithFormat:@"%@° Brix",segueToResult];
     }
+=======
+>>>>>>> origin/master
     else{
         NSArray *arrys1= [receData componentsSeparatedByString:@"\""];
         NSLog(@"收到的数组数据：%lu，原始数据：%@",(unsigned long)arrys1.count,receData);
@@ -284,7 +308,11 @@
     return segueToResult;
 }
 
+<<<<<<< HEAD
 //从模
+=======
+//从模型中获取工作流
+>>>>>>> origin/master
 + (void)getHttp{
     ///*
     NSString* result;
@@ -499,6 +527,31 @@
     return scanTime;
 }
 
++ (BOOL)isCbDataCurrent: (double*)cb : (int)workFlowPoints{
+    NSMutableArray *_isCurrentDataArray = [[NSMutableArray alloc]initWithCapacity:workFlowPoints];
+    for (int i = 0; i < workFlowPoints; i++) {
+        [_isCurrentDataArray addObject:@(cb[i])];
+    }
+    double dataMax = [[_isCurrentDataArray valueForKeyPath:@"@max.floatValue"]doubleValue];
+    if (dataMax > 1000) {
+        return YES;
+    }else{
+        return NO;
+    }
+}
+
++ (BOOL)isIntentDataCurrent: (double*)intent : (int)workFlowPoints{
+    NSMutableArray *_isCurrentDataArray = [[NSMutableArray alloc]initWithCapacity:workFlowPoints];
+    for (int i = 0; i < workFlowPoints; i++) {
+        [_isCurrentDataArray addObject:@(intent[i])];
+    }
+    double dataMax = [[_isCurrentDataArray valueForKeyPath:@"@max.floatValue"]doubleValue];
+    if (dataMax > 100) {
+        return YES;
+    }else{
+        return NO;
+    }
+}
 
 
 @end
